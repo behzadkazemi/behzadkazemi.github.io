@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Behzad Kazemi | Senior Frontend Engineer</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card-bg: #1e293b;
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --primary: #38bdf8;
+      --accent: #818cf8;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; }
+    body { background-color: var(--bg); color: var(--text); line-height: 1.6; padding: 20px; }
+    .container { max-width: 900px; margin: 0 auto; }
+    header { text-align: center; padding: 50px 0; border-bottom: 1px solid #334155; }
+    h1 { font-size: 2.8rem; color: var(--primary); margin-bottom: 10px; }
+    .subtitle { font-size: 1.25rem; color: var(--muted); margin-bottom: 25px; }
+    .btn-group { display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; }
+    .btn { padding: 10px 22px; background: var(--card-bg); color: var(--primary); text-decoration: none; border: 1px solid var(--primary); border-radius: 8px; font-weight: 600; transition: all 0.3s; }
+    .btn:hover { background: var(--primary); color: var(--bg); }
+    section { margin: 40px 0; }
+    h2 { font-size: 1.8rem; color: var(--accent); margin-bottom: 20px; border-bottom: 2px solid var(--accent); display: inline-block; padding-bottom: 5px; }
+    .skills { display: flex; flex-wrap: wrap; gap: 10px; list-style: none; }
+    .skill-tag { background: #334155; padding: 6px 14px; border-radius: 20px; font-size: 0.95rem; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+    .card { background: var(--card-bg); padding: 22px; border-radius: 12px; border: 1px solid #334155; }
+    .card h3 { color: var(--primary); margin-bottom: 8px; }
+    .card .company { color: var(--muted); font-size: 0.95rem; margin-bottom: 12px; }
+    footer { text-align: center; padding: 30px 0; color: var(--muted); border-top: 1px solid #334155; margin-top: 50px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Behzad Kazemi</h1>
+      <p class="subtitle">Senior Frontend Engineer | M.Sc. in IT | Berlin, Germany 🇩🇪</p>
+      <div class="btn-group">
+        <a href="https://linkedin.com/in/behzadkazemi" target="_blank" class="btn">LinkedIn</a>
+        <a href="https://github.com/behzadkazemi" target="_blank" class="btn">GitHub</a>
+        <a href="mailto:bkazemi1994@gmail.com" class="btn">Contact Me</a>
+      </div>
+    </header>
+
+    <section>
+      <h2>About Me</h2>
+      <p>
+        Results-driven Front-End Developer with over 5 years of experience crafting high-performance, scalable, and user-centric web applications. 
+        Holds a Master's degree in IT from IU International University of Applied Sciences, Germany.
+      </p>
+    </section>
+
+    <section>
+      <h2>Tech Stack</h2>
+      <ul class="skills">
+        <li class="skill-tag">JavaScript (ES6+)</li>
+        <li class="skill-tag">TypeScript</li>
+        <li class="skill-tag">React.js</li>
+        <li class="skill-tag">Vue.js</li>
+        <li class="skill-tag">Next.js</li>
+        <li class="skill-tag">Redux</li>
+        <li class="skill-tag">Tailwind CSS</li>
+        <li class="skill-tag">HTML5 / Sass</li>
+        <li class="skill-tag">REST APIs</li>
+        <li class="skill-tag">Git / GitHub</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>Experience</h2>
+      <div class="grid">
+        <div class="card">
+          <h3>Frontend Engineer</h3>
+          <p class="company">a&o Hostels • Berlin, Germany</p>
+          <p>Engineering modern web solutions and core frontend infrastructure.</p>
+        </div>
+        <div class="card">
+          <h3>Frontend Engineer</h3>
+          <p class="company">avodaq AG • Berlin, Germany</p>
+          <p>Developed customer portals for Cisco products and collaborated with enterprise clients.</p>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <p>© 2026 Behzad Kazemi. Hosted on GitHub Pages.</p>
+    </footer>
+  </div>
+</body>
+</html>
