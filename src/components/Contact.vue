@@ -18,7 +18,7 @@
               <div class="method-icon">✉️</div>
               <div class="method-info">
                 <h4>Email</h4>
-                <a href="mailto:your.email@example.com">contact@behzadkazemi.dev</a>
+                <a href="mailto:bkazemi1994@gmail.com">bkazemi1994@gmail.com</a>
               </div>
             </div>
             <div class="contact-method">

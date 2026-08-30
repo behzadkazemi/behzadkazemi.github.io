@@ -39,7 +39,7 @@
         </div>
         <div class="about-stats fade-in-up">
           <div class="stat-card">
-            <div class="stat-number">3+</div>
+            <div class="stat-number">5+</div>
             <div class="stat-label">Years of Experience</div>
             <p>Building modern web applications with cutting-edge technologies</p>
           </div>
