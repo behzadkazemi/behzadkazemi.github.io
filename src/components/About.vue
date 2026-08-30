@@ -8,7 +8,7 @@
         <div class="about-text fade-in-up">
           <p>
             I'm a Software Engineer with a Master's degree in IT, based in Berlin with a passion for building elegant digital solutions.
-            Beyond coding, I'm also a professional badminton player and a passionate santur musician, which keeps me creative and focused.
+            Beyond coding, I'm also a professional badminton player and a passionate santoor musician, which keeps me creative and focused.
           </p>
           <p>
             At <strong>a&o Hostels</strong>, I'm working as a Frontend Developer, creating responsive and intuitive web interfaces.
