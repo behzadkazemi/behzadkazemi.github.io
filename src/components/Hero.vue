@@ -16,17 +16,129 @@
         </div>
       </div>
       <div class="hero-visual fade-in-down">
-        <div class="avatar-container">
-          <div class="avatar-placeholder">
-            <div class="avatar-icon">👨‍💻</div>
-          </div>
-        </div>
+        <div ref="sceneHost" class="liquid-scene" aria-hidden="true"></div>
+        <div class="scene-caption">Creative systems / Berlin</div>
       </div>
     </div>
   </section>
 </template>
 
 <script setup lang="ts">
+import { onBeforeUnmount, onMounted, ref } from 'vue'
+import * as THREE from 'three'
+
+const sceneHost = ref<HTMLDivElement | null>(null)
+let renderer: THREE.WebGLRenderer | null = null
+let animationFrame = 0
+let cleanupScene: (() => void) | null = null
+
+onMounted(() => {
+  if (!sceneHost.value) return
+
+  const scene = new THREE.Scene()
+  const camera = new THREE.PerspectiveCamera(34, 1, 0.1, 100)
+  camera.position.z = 4.8
+
+  renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true })
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+  renderer.outputColorSpace = THREE.SRGBColorSpace
+  sceneHost.value.appendChild(renderer.domElement)
+
+  const uniforms = {
+    uTime: { value: 0 },
+    uPointer: { value: new THREE.Vector2(0, 0) },
+  }
+
+  const geometry = new THREE.IcosahedronGeometry(1.55, 64)
+  const material = new THREE.ShaderMaterial({
+    uniforms,
+    vertexShader: `
+      uniform float uTime;
+      uniform vec2 uPointer;
+      varying vec3 vNormal;
+      varying vec3 vPosition;
+
+      float wave(vec3 point) {
+        return sin(point.x * 3.2 + uTime * 1.1)
+          + sin(point.y * 4.1 - uTime * 0.8)
+          + sin(point.z * 5.0 + uTime * 0.9);
+      }
+
+      void main() {
+        vec3 displaced = position + normal * wave(position) * 0.075;
+        displaced += normal * sin(position.y * 8.0 + uTime * 1.4) * 0.035;
+        displaced.x += uPointer.x * 0.08;
+        displaced.y += uPointer.y * 0.08;
+        vNormal = normalize(normalMatrix * normal);
+        vPosition = displaced;
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(displaced, 1.0);
+      }
+    `,
+    fragmentShader: `
+      uniform float uTime;
+      varying vec3 vNormal;
+      varying vec3 vPosition;
+
+      void main() {
+        vec3 light = normalize(vec3(-0.5, 0.8, 1.0));
+        float glow = pow(1.0 - max(dot(vNormal, vec3(0.0, 0.0, 1.0)), 0.0), 2.0);
+        float lighting = max(dot(vNormal, light), 0.0);
+        float ripple = sin(vPosition.y * 5.0 + uTime) * 0.08;
+        vec3 deep = vec3(0.02, 0.12, 0.22);
+        vec3 cyan = vec3(0.02, 0.72, 0.78);
+        vec3 coral = vec3(1.0, 0.34, 0.24);
+        vec3 color = mix(deep, cyan, lighting + glow * 0.7);
+        color = mix(color, coral, smoothstep(0.25, 0.95, vPosition.x + ripple) * 0.45);
+        gl_FragColor = vec4(color + glow * 0.18, 0.96);
+      }
+    `,
+  })
+  const liquid = new THREE.Mesh(geometry, material)
+  scene.add(liquid)
+
+  const resize = () => {
+    if (!sceneHost.value || !renderer) return
+    const { clientWidth, clientHeight } = sceneHost.value
+    camera.aspect = clientWidth / clientHeight
+    camera.updateProjectionMatrix()
+    renderer.setSize(clientWidth, clientHeight, false)
+  }
+
+  const pointer = (event: PointerEvent) => {
+    if (!sceneHost.value) return
+    const bounds = sceneHost.value.getBoundingClientRect()
+    uniforms.uPointer.value.set(
+      ((event.clientX - bounds.left) / bounds.width - 0.5) * 2,
+      -((event.clientY - bounds.top) / bounds.height - 0.5) * 2,
+    )
+  }
+
+  const animate = (time: number) => {
+    uniforms.uTime.value = time * 0.001
+    liquid.rotation.y = time * 0.00012
+    liquid.rotation.x = Math.sin(time * 0.00025) * 0.12
+    renderer?.render(scene, camera)
+    animationFrame = requestAnimationFrame(animate)
+  }
+
+  resize()
+  window.addEventListener('resize', resize)
+  sceneHost.value.addEventListener('pointermove', pointer)
+  animationFrame = requestAnimationFrame(animate)
+
+  cleanupScene = () => {
+    cancelAnimationFrame(animationFrame)
+    window.removeEventListener('resize', resize)
+    sceneHost.value?.removeEventListener('pointermove', pointer)
+    geometry.dispose()
+    material.dispose()
+    renderer?.dispose()
+    renderer?.domElement.remove()
+    renderer = null
+  }
+})
+
+onBeforeUnmount(() => cleanupScene?.())
 </script>
 
 <style scoped>
@@ -35,7 +147,7 @@
   display: flex;
   align-items: center;
   padding: 120px 0 80px;
-  background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
+  background: #07151d;
   position: relative;
   overflow: hidden;
 }
@@ -47,8 +159,8 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: radial-gradient(circle at 20% 50%, rgba(37, 99, 235, 0.05) 0%, transparent 50%),
-              radial-gradient(circle at 80% 80%, rgba(124, 58, 237, 0.05) 0%, transparent 50%);
+  background: radial-gradient(circle at 72% 48%, rgba(17, 197, 191, 0.16), transparent 34%),
+              linear-gradient(120deg, rgba(255, 92, 68, 0.1), transparent 36%);
   pointer-events: none;
 }
 
@@ -67,7 +179,8 @@
 .hero-content h1 {
   font-size: 3.5rem;
   margin-bottom: 10px;
-  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  color: #f5f7ef;
+  background: linear-gradient(135deg, #f5f7ef 20%, #8de3d7 85%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -77,13 +190,13 @@
 .subtitle {
   font-size: 1.5rem;
   font-weight: 600;
-  color: var(--text-secondary);
+  color: #ff8a72;
   margin-bottom: 20px;
 }
 
 .description {
   font-size: 1.1rem;
-  color: var(--text-secondary);
+  color: #b7c9c8;
   margin-bottom: 40px;
   line-height: 1.8;
   max-width: 500px;
@@ -105,24 +218,24 @@
 }
 
 .btn-primary {
-  background-color: var(--primary);
+  background-color: #ff604d;
   color: white;
 }
 
 .btn-primary:hover {
-  background-color: var(--primary-dark);
+  background-color: #ff866f;
   transform: translateY(-2px);
   box-shadow: 0 10px 25px rgba(37, 99, 235, 0.3);
 }
 
 .btn-secondary {
   background-color: transparent;
-  color: var(--primary);
-  border: 2px solid var(--primary);
+  color: #8de3d7;
+  border: 2px solid #8de3d7;
 }
 
 .btn-secondary:hover {
-  background-color: var(--primary);
+  background-color: #8de3d7;
   color: white;
   transform: translateY(-2px);
 }
@@ -134,59 +247,28 @@
   animation-delay: 0.4s;
 }
 
-.avatar-container {
+.liquid-scene {
   position: relative;
   width: 100%;
-  max-width: 400px;
-  aspect-ratio: 1;
+  max-width: 520px;
+  aspect-ratio: 1 / 1.08;
+  filter: drop-shadow(0 30px 45px rgba(0, 0, 0, 0.35));
 }
 
-.avatar-placeholder {
+.liquid-scene canvas {
   width: 100%;
   height: 100%;
-  border-radius: 20px;
-  background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  overflow: hidden;
-  box-shadow: 0 20px 60px rgba(37, 99, 235, 0.2);
-  animation: float 6s ease-in-out infinite;
+  display: block;
 }
 
-.avatar-placeholder::before {
-  content: '';
+.scene-caption {
   position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.1) 50%, transparent 70%);
-  animation: shine 3s infinite;
-}
-
-.avatar-icon {
-  font-size: 100px;
-  z-index: 1;
-}
-
-@keyframes float {
-  0%, 100% {
-    transform: translateY(0px);
-  }
-  50% {
-    transform: translateY(-20px);
-  }
-}
-
-@keyframes shine {
-  0% {
-    transform: translateX(-100%) translateY(-100%) rotate(45deg);
-  }
-  100% {
-    transform: translateX(100%) translateY(100%) rotate(45deg);
-  }
+  right: 5%;
+  bottom: 4%;
+  color: rgba(245, 247, 239, 0.62);
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
 }
 
 @media (max-width: 768px) {
@@ -215,12 +297,8 @@
     margin-top: 20px;
   }
 
-  .avatar-container {
+  .liquid-scene {
     max-width: 300px;
-  }
-
-  .avatar-icon {
-    font-size: 70px;
   }
 }
 </style>
