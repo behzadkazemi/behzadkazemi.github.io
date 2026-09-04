@@ -106,9 +106,7 @@ onUnmounted(() => {
 .logo h2 {
   font-size: 1.5rem;
   color: var(--primary);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  -webkit-text-fill-color: var(--primary);
   margin: 0;
 }
 

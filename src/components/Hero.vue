@@ -36,8 +36,8 @@ onMounted(() => {
   if (!sceneHost.value) return
 
   const scene = new THREE.Scene()
-  const camera = new THREE.PerspectiveCamera(34, 1, 0.1, 100)
-  camera.position.z = 4.8
+  const camera = new THREE.PerspectiveCamera(42, 1, 0.1, 100)
+  camera.position.z = 5.8
 
   renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true })
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
@@ -214,7 +214,7 @@ onBeforeUnmount(() => cleanupScene?.())
 .hero-buttons a {
   padding: 14px 32px;
   font-weight: 600;
-  border-radius: 8px;
+  border-radius: 2px;
   transition: all 0.3s ease;
   display: inline-block;
   text-decoration: none;
@@ -226,9 +226,9 @@ onBeforeUnmount(() => cleanupScene?.())
 }
 
 .btn-primary:hover {
-  background-color: #ff866f;
+  background-color: var(--primary-dark);
   transform: translateY(-2px);
-  box-shadow: 0 10px 25px rgba(37, 99, 235, 0.3);
+  box-shadow: 0 0 30px rgba(141, 255, 101, 0.3);
 }
 
 .btn-secondary {
@@ -238,8 +238,8 @@ onBeforeUnmount(() => cleanupScene?.())
 }
 
 .btn-secondary:hover {
-  background-color: #8de3d7;
-  color: white;
+  background-color: var(--primary);
+  color: #07100d;
   transform: translateY(-2px);
 }
 
@@ -256,6 +256,16 @@ onBeforeUnmount(() => cleanupScene?.())
   max-width: 520px;
   aspect-ratio: 1 / 1.08;
   filter: drop-shadow(0 30px 45px rgba(0, 0, 0, 0.35));
+}
+
+.liquid-scene::before {
+  content: '';
+  position: absolute;
+  inset: 18% 14%;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(48, 221, 113, 0.2), transparent 68%);
+  filter: blur(18px);
+  pointer-events: none;
 }
 
 .liquid-scene canvas {
