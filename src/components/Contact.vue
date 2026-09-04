@@ -13,7 +13,7 @@
           <p>
             I'll do my best to respond as quickly as possible.
           </p>
-          <div class="contact-methods">
+            <div class="contact-methods" style="background-color: rgba(13, 29, 22, 0.86);">
             <div class="contact-method">
               <div class="method-icon">✉️</div>
               <div class="method-info">
@@ -62,7 +62,7 @@
               <label for="message">Message</label>
               <textarea id="message" v-model="form.message" required placeholder="Your message..." rows="6"></textarea>
             </div>
-            <button type="submit" class="btn-primary">Send Message</button>
+              <button type="submit" class="btn-primary" style="background-color: rgba(17, 39, 28, 0.9);">Send Message</button>
             <p v-if="formStatus" :class="['form-status', formStatus.type]">{{ formStatus.message }}</p>
           </form>
         </div>
@@ -125,7 +125,7 @@ const handleSubmit = async () => {
 
 <style scoped>
 .contact {
-  background-color: var(--bg-white);
+  background-color: transparent;
   position: relative;
 }
 
@@ -220,11 +220,11 @@ const handleSubmit = async () => {
   width: 100%;
   padding: 12px 16px;
   border: 1px solid var(--border-light);
-  border-radius: 8px;
+  border-radius: 2px;
   font-family: inherit;
   font-size: 1rem;
   color: var(--text-primary);
-  background-color: #f9fafb;
+  background-color: rgba(13, 29, 22, 0.86);
   transition: all 0.3s ease;
 }
 
@@ -232,8 +232,8 @@ const handleSubmit = async () => {
 .form-group textarea:focus {
   outline: none;
   border-color: var(--primary);
-  background-color: white;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+  background-color: rgba(17, 39, 28, 0.9);
+  box-shadow: 0 0 0 3px rgba(141, 255, 101, 0.12);
 }
 
 .form-group textarea {
@@ -269,15 +269,15 @@ button[type="submit"]:hover {
 }
 
 .form-status.success {
-  background-color: #d1fae5;
-  color: #065f46;
-  border: 1px solid #a7f3d0;
+  background-color: rgba(141, 255, 101, 0.1);
+  color: var(--primary);
+  border: 1px solid var(--primary);
 }
 
 .form-status.error {
-  background-color: #fee2e2;
-  color: #991b1b;
-  border: 1px solid #fecaca;
+  background-color: rgba(255, 107, 107, 0.1);
+  color: var(--error);
+  border: 1px solid var(--error);
 }
 
 @media (max-width: 768px) {

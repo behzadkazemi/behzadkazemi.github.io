@@ -84,11 +84,11 @@ onMounted(() => {
         float glow = pow(1.0 - max(dot(vNormal, vec3(0.0, 0.0, 1.0)), 0.0), 2.0);
         float lighting = max(dot(vNormal, light), 0.0);
         float ripple = sin(vPosition.y * 5.0 + uTime) * 0.08;
-        vec3 deep = vec3(0.02, 0.12, 0.22);
-        vec3 cyan = vec3(0.02, 0.72, 0.78);
-        vec3 coral = vec3(1.0, 0.34, 0.24);
-        vec3 color = mix(deep, cyan, lighting + glow * 0.7);
-        color = mix(color, coral, smoothstep(0.25, 0.95, vPosition.x + ripple) * 0.45);
+        vec3 deep = vec3(0.01, 0.07, 0.045);
+        vec3 emerald = vec3(0.05, 0.72, 0.35);
+        vec3 lime = vec3(0.55, 1.0, 0.22);
+        vec3 color = mix(deep, emerald, lighting + glow * 0.7);
+        color = mix(color, lime, smoothstep(0.25, 0.95, vPosition.x + ripple) * 0.4);
         gl_FragColor = vec4(color + glow * 0.18, 0.96);
       }
     `,
@@ -147,7 +147,7 @@ onBeforeUnmount(() => cleanupScene?.())
   display: flex;
   align-items: center;
   padding: 120px 0 80px;
-  background: #07151d;
+  background: #07100d;
   position: relative;
   overflow: hidden;
 }
@@ -159,8 +159,7 @@ onBeforeUnmount(() => cleanupScene?.())
   left: 0;
   width: 100%;
   height: 100%;
-  background: radial-gradient(circle at 72% 48%, rgba(17, 197, 191, 0.16), transparent 34%),
-              linear-gradient(120deg, rgba(255, 92, 68, 0.1), transparent 36%);
+  background: radial-gradient(circle at 72% 48%, rgba(74, 255, 116, 0.16), transparent 34%), linear-gradient(120deg, rgba(141, 255, 101, 0.06), transparent 36%);
   pointer-events: none;
 }
 
@@ -180,7 +179,7 @@ onBeforeUnmount(() => cleanupScene?.())
   font-size: 3.5rem;
   margin-bottom: 10px;
   color: #f5f7ef;
-  background: linear-gradient(135deg, #f5f7ef 20%, #8de3d7 85%);
+  background: linear-gradient(135deg, #f2ffe9 20%, #8dff65 85%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -190,13 +189,17 @@ onBeforeUnmount(() => cleanupScene?.())
 .subtitle {
   font-size: 1.5rem;
   font-weight: 600;
-  color: #ff8a72;
+  color: var(--primary);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.9rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
   margin-bottom: 20px;
 }
 
 .description {
   font-size: 1.1rem;
-  color: #b7c9c8;
+  color: var(--text-secondary);
   margin-bottom: 40px;
   line-height: 1.8;
   max-width: 500px;
@@ -218,8 +221,8 @@ onBeforeUnmount(() => cleanupScene?.())
 }
 
 .btn-primary {
-  background-color: #ff604d;
-  color: white;
+  background-color: var(--primary);
+  color: #07100d;
 }
 
 .btn-primary:hover {
@@ -230,8 +233,8 @@ onBeforeUnmount(() => cleanupScene?.())
 
 .btn-secondary {
   background-color: transparent;
-  color: #8de3d7;
-  border: 2px solid #8de3d7;
+  color: var(--primary);
+  border: 1px solid var(--primary);
 }
 
 .btn-secondary:hover {
@@ -265,7 +268,8 @@ onBeforeUnmount(() => cleanupScene?.())
   position: absolute;
   right: 5%;
   bottom: 4%;
-  color: rgba(245, 247, 239, 0.62);
+  color: rgba(141, 255, 101, 0.62);
+  font-family: 'IBM Plex Mono', monospace;
   font-size: 0.72rem;
   letter-spacing: 0.12em;
   text-transform: uppercase;

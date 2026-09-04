@@ -28,9 +28,9 @@
                 </svg>
                 Live
               </a>
-            </div>
           </div>
         </div>
+      </div>
       </div>
       <div class="more-projects">
         <p>Interested in more? Check out my <a href="https://github.com/behzadkazemi" target="_blank" rel="noopener noreferrer">GitHub profile</a> for additional projects.</p>
@@ -89,7 +89,7 @@ const projects = ref<Project[]>([
 
 <style scoped>
 .projects {
-  background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
+  background: rgba(10, 24, 17, 0.58);
   position: relative;
 }
 
@@ -111,8 +111,8 @@ const projects = ref<Project[]>([
 }
 
 .project-card {
-  background: white;
-  border-radius: 12px;
+  background: var(--panel);
+  border-radius: 4px;
   overflow: hidden;
   border: 1px solid var(--border-light);
   transition: all 0.3s ease;
@@ -130,7 +130,7 @@ const projects = ref<Project[]>([
 .project-image {
   width: 100%;
   height: 200px;
-  background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+  background: radial-gradient(circle at 50% 20%, rgba(141, 255, 101, 0.3), transparent 38%), linear-gradient(135deg, #122f20, #07100d);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -186,9 +186,9 @@ const projects = ref<Project[]>([
 .tech-badge {
   display: inline-block;
   padding: 4px 12px;
-  background-color: #e0e7ff;
+  background-color: rgba(141, 255, 101, 0.08);
   color: var(--primary);
-  border-radius: 20px;
+  border-radius: 2px;
   font-size: 0.8rem;
   font-weight: 500;
 }
@@ -206,7 +206,7 @@ const projects = ref<Project[]>([
   align-items: center;
   gap: 6px;
   padding: 8px 16px;
-  background-color: #f3f4f6;
+  background-color: rgba(141, 255, 101, 0.08);
   color: var(--primary);
   border-radius: 6px;
   font-weight: 600;
@@ -223,7 +223,7 @@ const projects = ref<Project[]>([
 }
 
 .project-link.live {
-  background-color: #d1fae5;
+  background-color: rgba(32, 201, 151, 0.12);
   color: var(--success);
 }
 
@@ -240,8 +240,8 @@ const projects = ref<Project[]>([
 .more-projects {
   text-align: center;
   padding: 40px;
-  background: white;
-  border-radius: 12px;
+  background: var(--panel);
+  border-radius: 4px;
   border: 2px dashed var(--border-light);
 }
 

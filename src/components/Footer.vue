@@ -42,7 +42,7 @@
 
 <style scoped>
 .footer {
-  background: linear-gradient(135deg, var(--text-primary) 0%, #2d3748 100%);
+  background: linear-gradient(135deg, #0d2418 0%, #050a08 100%);
   color: white;
   padding: 60px 0 20px;
   margin-top: 100px;
@@ -109,7 +109,7 @@
   width: 40px;
   height: 40px;
   background-color: rgba(255, 255, 255, 0.1);
-  border-radius: 50%;
+  border-radius: 2px;
   transition: all 0.3s ease;
 }
 

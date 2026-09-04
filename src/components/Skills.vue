@@ -17,7 +17,6 @@
     </div>
   </section>
 </template>
-
 <script setup lang="ts">
 import { ref } from 'vue'
 
@@ -56,7 +55,7 @@ const skillCategories = ref<SkillCategory[]>([
 
 <style scoped>
 .skills {
-  background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
+  background: rgba(10, 24, 17, 0.58);
   position: relative;
 }
 
@@ -77,16 +76,16 @@ const skillCategories = ref<SkillCategory[]>([
 }
 
 .skill-category {
-  background: white;
+  background: var(--panel);
   padding: 30px;
-  border-radius: 12px;
+  border-radius: 4px;
   border: 1px solid var(--border-light);
   transition: all 0.3s ease;
 }
 
 .skill-category:hover {
   border-color: var(--primary);
-  box-shadow: 0 10px 30px rgba(37, 99, 235, 0.1);
+  box-shadow: 0 10px 30px rgba(141, 255, 101, 0.12);
   transform: translateY(-4px);
 }
 
@@ -109,9 +108,9 @@ const skillCategories = ref<SkillCategory[]>([
 .skill-badge {
   display: inline-block;
   padding: 8px 16px;
-  background-color: #f3f4f6;
+  background-color: rgba(141, 255, 101, 0.05);
   color: var(--text-primary);
-  border-radius: 20px;
+  border-radius: 2px;
   font-weight: 500;
   font-size: 0.95rem;
   transition: all 0.3s ease;

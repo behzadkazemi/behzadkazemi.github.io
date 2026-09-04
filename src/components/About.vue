@@ -64,7 +64,7 @@
 
 <style scoped>
 .about {
-  background-color: var(--bg-white);
+  background-color: transparent;
   position: relative;
 }
 
@@ -130,8 +130,8 @@
 
 .stat-card {
   padding: 30px;
-  background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
-  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(17, 39, 28, 0.9), rgba(8, 20, 14, 0.9));
+  border-radius: 4px;
   border: 1px solid var(--border-light);
   transition: all 0.3s ease;
   text-align: center;
@@ -139,7 +139,7 @@
 
 .stat-card:hover {
   border-color: var(--primary);
-  box-shadow: 0 8px 24px rgba(37, 99, 235, 0.1);
+  box-shadow: 0 8px 24px rgba(141, 255, 101, 0.12);
   transform: translateY(-4px);
 }
 

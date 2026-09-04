@@ -31,7 +31,6 @@
     </div>
   </section>
 </template>
-
 <script setup lang="ts">
 import { ref } from 'vue'
 
@@ -95,7 +94,7 @@ const jobs = ref<Job[]>([
 
 <style scoped>
 .experience {
-  background-color: var(--bg-white);
+  background-color: transparent;
   position: relative;
 }
 
@@ -149,9 +148,9 @@ const jobs = ref<Job[]>([
 }
 
 .timeline-content {
-  background: linear-gradient(135deg, #f9fafb 0%, #ffffff 100%);
+  background: linear-gradient(135deg, rgba(17, 39, 28, 0.9), rgba(8, 20, 14, 0.9));
   padding: 30px;
-  border-radius: 12px;
+  border-radius: 4px;
   border: 1px solid var(--border-light);
   transition: all 0.3s ease;
 }
@@ -237,9 +236,9 @@ const jobs = ref<Job[]>([
 .tag {
   display: inline-block;
   padding: 6px 14px;
-  background-color: #e0e7ff;
+  background-color: rgba(141, 255, 101, 0.08);
   color: var(--primary);
-  border-radius: 20px;
+  border-radius: 2px;
   font-size: 0.85rem;
   font-weight: 500;
   transition: all 0.3s ease;
