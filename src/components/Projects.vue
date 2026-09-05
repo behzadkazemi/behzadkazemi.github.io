@@ -84,6 +84,7 @@ const harryPotterPreviewCharacters: PreviewCharacter[] = [
 
 const bmiPreviewIcons = ['⚖', '↕', '▣', '●', '＋', '◇']
 const weatherPreviewIcons = ['☀', '☁', '☂', '❄', '☄', '◌']
+const harryPotterPreviewIcons = ['⚡', '✦', '◇', '✧', '☄']
 
 const projects = ref<Project[]>([
   {
@@ -175,6 +176,7 @@ const projects = ref<Project[]>([
     technologies: ['JavaScript', 'HTML5', 'CSS3'],
     github: 'https://github.com/behzadkazemi/HarryPotter',
     live: '/harry-potter/',
+    previewIcons: harryPotterPreviewIcons,
     previewCharacters: harryPotterPreviewCharacters,
     previewBubbleCount: 14
   },

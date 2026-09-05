@@ -9,8 +9,7 @@
       :style="bubbleStyle(bubble)"
     >
       <span></span>
-      <img v-if="bubble.character" :src="bubble.character.image" :alt="`${bubble.character.name} portrait`" />
-      <strong v-else-if="bubble.icon">{{ bubble.icon }}</strong>
+      <strong>{{ bubble.icon }}</strong>
     </div>
     <div class="preview-label">{{ title }}</div>
   </div>
@@ -70,6 +69,11 @@ if (props.icons?.length) {
     bubble.icon = props.icons![index % props.icons!.length]
   })
 }
+
+const defaultIcons = ['✦', '◇', '◈', '✧', '○', '△', '✺']
+bubbles.value.forEach((bubble, index) => {
+  bubble.icon = bubble.icon || defaultIcons[index % defaultIcons.length]
+})
 
 const bubbleStyle = (bubble: Bubble) => ({
   left: `${bubble.baseX + bubble.driftX + bubble.offsetX}%`,
@@ -209,10 +213,12 @@ onBeforeUnmount(() => {
   overflow: hidden;
   color: #fff;
   font-family: 'IBM Plex Mono', monospace;
-  font-size: 1.65rem;
+  font-size: 2.4rem;
+  font-weight: 700;
+  line-height: 1;
   text-align: center;
   text-overflow: ellipsis;
-  text-shadow: 0 1px 4px #000;
+  text-shadow: 0 0 8px rgba(255, 255, 255, 0.8), 0 2px 8px rgba(12, 8, 38, 0.7);
   white-space: nowrap;
 }
 
