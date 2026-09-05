@@ -42,7 +42,10 @@ interface Bubble {
 }
 
 const preview = ref<HTMLElement | null>(null)
-const bubbles = ref<Bubble[]>(Array.from({ length: props.bubbleCount || 7 }, (_, index) => ({
+const bubbleTotal = props.characters?.length
+  ? Math.min(props.bubbleCount || props.characters.length, props.characters.length)
+  : props.bubbleCount || 7
+const bubbles = ref<Bubble[]>(Array.from({ length: bubbleTotal }, (_, index) => ({
   id: index,
   baseX: 12 + Math.random() * 76,
   baseY: 18 + Math.random() * 64,
@@ -56,8 +59,9 @@ const bubbles = ref<Bubble[]>(Array.from({ length: props.bubbleCount || 7 }, (_,
 })))
 
 if (props.characters?.length) {
-  bubbles.value.forEach((bubble) => {
-    bubble.character = props.characters![Math.floor(Math.random() * props.characters!.length)]
+  const shuffledCharacters = [...props.characters].sort(() => Math.random() - 0.5)
+  bubbles.value.forEach((bubble, index) => {
+    bubble.character = shuffledCharacters[index]
   })
 }
 
