@@ -82,7 +82,7 @@ const projects = ref<Project[]>([
     icon: '\uD83E\uDDE9',
     technologies: ['JavaScript', 'HTML5', 'CSS3'],
     github: 'https://github.com/behzadkazemi/behzad-itoito-code-challengee',
-    live: 'https://behzadkazemi.github.io/behzad-itoito-code-challengee/'
+    live: '/ito-ito-challenge/'
   },
   {
     title: 'Color Challenge',
