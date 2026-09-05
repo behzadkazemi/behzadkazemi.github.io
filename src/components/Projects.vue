@@ -7,7 +7,13 @@
       <div class="projects-grid">
         <div class="project-card fade-in-up" v-for="(project, index) in projects" :key="index" :style="{ animationDelay: `${index * 0.15}s` }">
           <div class="project-image">
-            <div class="image-placeholder">{{ project.icon }}</div>
+            <img
+              v-if="project.live"
+              :src="previewUrl(project)"
+              :alt="`${project.title} live demo preview`"
+              @error="hidePreview"
+            />
+            <div class="image-fallback">{{ project.title }}</div>
           </div>
           <div class="project-content">
             <h3>{{ project.title }}</h3>
@@ -57,6 +63,17 @@ interface Project {
   technologies: string[]
   github?: string
   live?: string
+}
+
+const previewUrl = (project: Project) => {
+  const liveUrl = isExternal(project.live || '')
+    ? project.live
+    : `https://behzadkazemi.github.io${project.live}`
+  return `https://image.thum.io/get/width/1200/crop/500/${liveUrl}`
+}
+
+const hidePreview = (event: Event) => {
+  (event.target as HTMLImageElement).style.display = 'none'
 }
 
 const projects = ref<Project[]>([
@@ -277,10 +294,32 @@ const projects = ref<Project[]>([
   animation: shine 3s infinite;
 }
 
-.image-placeholder {
-  font-size: 80px;
+.project-image img {
+  position: relative;
   z-index: 1;
-  animation: float 3s ease-in-out infinite;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  transition: transform 0.4s ease;
+}
+
+.project-card:hover .project-image img {
+  transform: scale(1.04);
+}
+
+.image-fallback {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  color: var(--primary);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 1rem;
+  letter-spacing: 0.08em;
+  text-align: center;
+  text-transform: uppercase;
 }
 
 .project-content {
