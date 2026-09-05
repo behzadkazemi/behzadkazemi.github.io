@@ -295,6 +295,10 @@ onBeforeUnmount(() => cleanupScene?.())
     gap: 40px;
   }
 
+  .hero-visual {
+    display: none;
+  }
+
   .hero-content h1 {
     font-size: 2.5rem;
   }
@@ -307,12 +311,5 @@ onBeforeUnmount(() => cleanupScene?.())
     font-size: 1rem;
   }
 
-  .hero-visual {
-    margin-top: 20px;
-  }
-
-  .liquid-scene {
-    max-width: 300px;
-  }
 }
 </style>
