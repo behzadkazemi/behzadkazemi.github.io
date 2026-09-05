@@ -85,12 +85,7 @@
         <div class="house-filter">
           <button v-for="house in houses" :key="house" type="button" :class="{ active: selectedHouse === house }" @click="selectedHouse = house">{{ house }}</button>
         </div>
-        <div class="wizard-grid">
-          <button v-for="wizard in filteredWizards" :key="wizard.name" type="button" class="wizard" @click="selectedWizard = wizard">
-            <img :src="wizard.image" :alt="`${wizard.name} portrait`" />
-            <span class="wizard-copy"><strong>{{ wizard.name }}</strong><small>{{ wizard.house }}</small></span>
-          </button>
-        </div>
+        <WizardBubbleField :key="selectedHouse" :characters="filteredWizards" @select="selectedWizard = $event" />
         <div v-if="selectedWizard" class="wizard-detail">
           <img :src="selectedWizard.image" :alt="`${selectedWizard.name} portrait`" />
           <div>
@@ -108,6 +103,7 @@
 
 <script setup lang="ts">
 import { computed, ref } from 'vue'
+import WizardBubbleField from './WizardBubbleField.vue'
 
 type Mode = 'random-movie' | 'imdb' | 'got' | 'harry-potter'
 interface Movie { title: string; year: number; rank: number; imdbId: string }
