@@ -78,10 +78,19 @@
         </div>
         <div class="wizard-grid">
           <button v-for="wizard in filteredWizards" :key="wizard.name" type="button" class="wizard" @click="selectedWizard = wizard">
-            <span class="wizard-mark">{{ wizard.mark }}</span><strong>{{ wizard.name }}</strong><small>{{ wizard.house }}</small>
+            <img :src="wizard.image" :alt="`${wizard.name} portrait`" />
+            <span class="wizard-copy"><strong>{{ wizard.name }}</strong><small>{{ wizard.house }}</small></span>
           </button>
         </div>
-        <div v-if="selectedWizard" class="wizard-detail"><span class="eyebrow">Character profile</span><h2>{{ selectedWizard.name }}</h2><p>{{ selectedWizard.description }}</p></div>
+        <div v-if="selectedWizard" class="wizard-detail">
+          <img :src="selectedWizard.image" :alt="`${selectedWizard.name} portrait`" />
+          <div>
+            <span class="eyebrow">Character profile</span>
+            <h2>{{ selectedWizard.name }}</h2>
+            <p>{{ selectedWizard.description }}</p>
+            <dl><div><dt>House</dt><dd>{{ selectedWizard.house }}</dd></div><div><dt>Role</dt><dd>{{ selectedWizard.role }}</dd></div><div><dt>Wand</dt><dd>{{ selectedWizard.wand }}</dd></div><div><dt>Patronus</dt><dd>{{ selectedWizard.patronus }}</dd></div></dl>
+          </div>
+        </div>
         <a class="source-link" href="https://github.com/behzadkazemi/HarryPotter" target="_blank" rel="noopener noreferrer">View source on GitHub</a>
       </section>
     </div>
@@ -93,7 +102,7 @@ import { computed, ref } from 'vue'
 
 type Mode = 'random-movie' | 'imdb' | 'got' | 'harry-potter'
 interface Movie { title: string; year: number; rank: number; imdbId: string }
-interface Person { name: string; house: string; sigil: string; description: string }
+interface Person { name: string; house: string; sigil: string; description: string; image?: string; role?: string; wand?: string; patronus?: string }
 
 const path = window.location.pathname.replace(/\/+$/, '')
 const mode: Mode = path.endsWith('/random-movie-adviser') ? 'random-movie' : path.endsWith('/imdb-top-250') ? 'imdb' : path.endsWith('/game-of-thrones') ? 'got' : 'harry-potter'
@@ -134,11 +143,11 @@ const quotes = [
 const fetchQuote = () => { quote.value = quotes[Math.floor(Math.random() * quotes.length)] }
 
 const wizards: Person[] = [
-  { name: 'Harry Potter', house: 'Gryffindor', sigil: 'HP', description: 'The Boy Who Lived, known for courage, loyalty, and a talent for finding trouble.' },
-  { name: 'Hermione Granger', house: 'Gryffindor', sigil: 'HG', description: 'A brilliant witch whose preparation and compassion repeatedly save the day.' },
-  { name: 'Draco Malfoy', house: 'Slytherin', sigil: 'DM', description: 'A Slytherin student shaped by family expectations and difficult choices.' },
-  { name: 'Luna Lovegood', house: 'Ravenclaw', sigil: 'LL', description: 'An original thinker with fierce loyalty and an unshakable sense of wonder.' },
-  { name: 'Cedric Diggory', house: 'Hufflepuff', sigil: 'CD', description: 'A fair-minded champion remembered for his generosity and integrity.' }
+  { name: 'Harry Potter', house: 'Gryffindor', sigil: 'HP', image: 'https://ik.imagekit.io/hpapi/harry.jpg', role: 'Auror', wand: 'Holly, phoenix feather, 11 inches', patronus: 'Stag', description: 'The Boy Who Lived, known for courage, loyalty, and a talent for finding trouble.' },
+  { name: 'Hermione Granger', house: 'Gryffindor', sigil: 'HG', image: 'https://ik.imagekit.io/hpapi/hermione.jpeg', role: 'Minister for Magic', wand: 'Vine, dragon heartstring, 10¾ inches', patronus: 'Otter', description: 'A brilliant witch whose preparation and compassion repeatedly save the day.' },
+  { name: 'Draco Malfoy', house: 'Slytherin', sigil: 'DM', image: 'https://ik.imagekit.io/hpapi/draco.jpg', role: 'Slytherin student', wand: 'Hawthorn, unicorn hair, 10 inches', patronus: 'Unknown', description: 'A Slytherin student shaped by family expectations and difficult choices.' },
+  { name: 'Luna Lovegood', house: 'Ravenclaw', sigil: 'LL', image: 'https://ik.imagekit.io/hpapi/luna.jpg', role: 'Magizoologist', wand: 'Unknown', patronus: 'Hare', description: 'An original thinker with fierce loyalty and an unshakable sense of wonder.' },
+  { name: 'Cedric Diggory', house: 'Hufflepuff', sigil: 'CD', image: 'https://ik.imagekit.io/hpapi/cedric.png', role: 'Triwizard champion', wand: 'Ash, unicorn hair, 12¼ inches', patronus: 'Unknown', description: 'A fair-minded champion remembered for his generosity and integrity.' }
 ]
 const houses = ['All', 'Gryffindor', 'Slytherin', 'Ravenclaw', 'Hufflepuff']
 const selectedHouse = ref('All')
@@ -182,12 +191,19 @@ input { width: 100%; padding: 14px; border: 1px solid #4a4847; border-radius: 3p
 .character, .wizard { display: grid; justify-items: start; gap: 4px; padding: 16px; border: 1px solid #494144; border-radius: 4px; background: rgba(255,255,255,.03); color: #f4f1e8; text-align: left; cursor: pointer; }
 .character:hover, .wizard:hover { border-color: #d6b36a; }
 .sigil, .wizard-mark { color: #d6b36a; font-size: 1.4rem; }
-.character-detail, .wizard-detail { display: grid; gap: 6px; margin-top: 18px; padding: 18px; border-left: 3px solid #d6b36a; background: rgba(214,179,106,.08); }
+.wizard { grid-template-columns: 72px 1fr; align-items: center; }
+.wizard img { width: 72px; height: 96px; border-radius: 3px; object-fit: cover; background: #3b3633; }
+.wizard-copy { display: block; }
+.character-detail, .wizard-detail { display: grid; grid-template-columns: 150px 1fr; gap: 22px; margin-top: 18px; padding: 18px; border-left: 3px solid #d6b36a; background: rgba(214,179,106,.08); }
+.wizard-detail > img { width: 150px; height: 200px; border-radius: 3px; object-fit: cover; background: #3b3633; }
 .character-detail span, .wizard-detail p { margin: 0; color: #b9b4a9; line-height: 1.6; }
+dl { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin: 20px 0 0; }
+dt { color: #918c83; font-size: .72rem; text-transform: uppercase; }
+dd { margin: 2px 0 0; color: #f4f1e8; font-size: .88rem; }
 .quote-box { padding: 28px 0; text-align: center; }
 .quote-mark { margin: 0; color: #d6b36a; font-size: 4rem; line-height: .8; }
 blockquote { margin: 18px auto; max-width: 600px; font-size: clamp(1.4rem, 4vw, 2.2rem); line-height: 1.35; }
 .quote-author { color: #d6b36a; }
 .empty-message { color: #b9b4a9; }
-@media (max-width: 560px) { .media-page { padding: 48px 16px; } .character-grid, .wizard-grid { grid-template-columns: 1fr; } .movie-pick { flex-direction: column; padding: 24px 14px; text-align: center; } .movie-poster, .empty-poster { flex-basis: 190px; width: 128px; height: 190px; } }
+@media (max-width: 560px) { .media-page { padding: 48px 16px; } .character-grid, .wizard-grid { grid-template-columns: 1fr; } .movie-pick { flex-direction: column; padding: 24px 14px; text-align: center; } .movie-poster, .empty-poster { flex-basis: 190px; width: 128px; height: 190px; } .wizard-detail { grid-template-columns: 1fr; } .wizard-detail > img { width: 128px; height: 170px; } dl { grid-template-columns: 1fr; } }
 </style>
