@@ -36,6 +36,10 @@ interface Bubble {
   scale: number
   driftX: number
   driftY: number
+  phase: number
+  speed: number
+  amplitudeX: number
+  amplitudeY: number
   character?: PreviewCharacter
   icon?: string
 }
@@ -54,7 +58,11 @@ const bubbles = ref<Bubble[]>(Array.from({ length: bubbleTotal }, (_, index) => 
   offsetY: 0,
   scale: 1,
   driftX: 0,
-  driftY: 0
+  driftY: 0,
+  phase: Math.random() * Math.PI * 2,
+  speed: 0.00035 + Math.random() * 0.00025,
+  amplitudeX: 3 + Math.random() * 5,
+  amplitudeY: 4 + Math.random() * 7
 })))
 
 if (props.characters?.length) {
@@ -118,22 +126,23 @@ const resetBubbles = () => {
   })
 }
 
-let driftTimer: number | undefined
+let animationFrame: number | undefined
 
-const moveBubbles = () => {
+const animateBubbles = (time: number) => {
   bubbles.value.forEach((bubble) => {
-    bubble.driftX = -8 + Math.random() * 16
-    bubble.driftY = -8 + Math.random() * 16
+    const wave = time * bubble.speed + bubble.phase
+    bubble.driftX = Math.sin(wave) * bubble.amplitudeX + Math.sin(wave * 0.57) * 1.5
+    bubble.driftY = Math.cos(wave * 0.83) * bubble.amplitudeY + Math.sin(wave * 0.43) * 1.5
   })
+  animationFrame = window.requestAnimationFrame(animateBubbles)
 }
 
 onMounted(() => {
-  moveBubbles()
-  driftTimer = window.setInterval(moveBubbles, 1300)
+  animationFrame = window.requestAnimationFrame(animateBubbles)
 })
 
 onBeforeUnmount(() => {
-  if (driftTimer) window.clearInterval(driftTimer)
+  if (animationFrame) window.cancelAnimationFrame(animationFrame)
 })
 </script>
 
@@ -166,8 +175,7 @@ onBeforeUnmount(() => {
   border-radius: 50%;
   box-shadow: inset -8px -10px 14px rgba(0, 0, 0, 0.24), inset 8px 7px 12px rgba(255, 255, 255, 0.32), 0 8px 18px rgba(0, 0, 0, 0.28);
   opacity: 0.92;
-  transition: left 0.35s ease-out, top 0.35s ease-out, transform 0.35s ease-out;
-  animation: liquid-float 5s ease-in-out infinite;
+  transition: transform 0.22s ease-out;
 }
 
 .liquid-bubble::before {
@@ -242,12 +250,7 @@ onBeforeUnmount(() => {
   text-transform: uppercase;
 }
 
-@keyframes liquid-float {
-  0%, 100% { margin-top: 0; }
-  50% { margin-top: -7px; }
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .liquid-bubble { animation: none; transition: none; }
+  .liquid-bubble { transition: none; }
 }
 </style>
