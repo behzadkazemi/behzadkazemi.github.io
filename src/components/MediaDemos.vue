@@ -81,18 +81,26 @@
       <section v-else class="media-card potter-card">
         <p class="eyebrow">Project demo / Ext JS original</p>
         <h1>Harry Potter</h1>
-        <p class="lead">Browse a compact character guide inspired by the original Ext JS training app.</p>
+        <p class="lead">Browse the complete character archive from the original Ext JS training app.</p>
         <div class="house-filter">
           <button v-for="house in houses" :key="house" type="button" :class="{ active: selectedHouse === house }" @click="selectedHouse = house">{{ house }}</button>
         </div>
-        <WizardBubbleField :key="selectedHouse" :characters="filteredWizards" @select="selectedWizard = $event" />
+        <p v-if="wizardLoading" class="archive-message">Loading all characters...</p>
+        <p v-else-if="wizardError" class="archive-message error-message">{{ wizardError }}</p>
+        <div v-else class="wizard-grid">
+          <button v-for="wizard in filteredWizards" :key="wizard.name" type="button" class="wizard" @click="selectedWizard = wizard">
+            <img :src="wizard.image" :alt="`${wizard.name} portrait`" />
+            <span class="wizard-copy"><strong>{{ wizard.name }}</strong><small>{{ wizard.nickname }} &middot; {{ wizard.house }}</small></span>
+          </button>
+        </div>
+        <p v-if="!wizardLoading && !wizardError && filteredWizards.length === 0" class="archive-message">No characters found for this house.</p>
         <div v-if="selectedWizard" class="wizard-detail">
           <img :src="selectedWizard.image" :alt="`${selectedWizard.name} portrait`" />
           <div>
             <span class="eyebrow">Character profile</span>
             <h2>{{ selectedWizard.name }}</h2>
             <p>{{ selectedWizard.description }}</p>
-            <dl><div><dt>House</dt><dd>{{ selectedWizard.house }}</dd></div><div><dt>Role</dt><dd>{{ selectedWizard.role }}</dd></div><div><dt>Wand</dt><dd>{{ selectedWizard.wand }}</dd></div><div><dt>Patronus</dt><dd>{{ selectedWizard.patronus }}</dd></div></dl>
+            <dl><div><dt>Nickname</dt><dd>{{ selectedWizard.nickname || 'Unknown' }}</dd></div><div><dt>House</dt><dd>{{ selectedWizard.house }}</dd></div><div><dt>Played by</dt><dd>{{ selectedWizard.actor }}</dd></div><div><dt>Hogwarts student</dt><dd>{{ selectedWizard.hogwartsStudent ? 'Yes' : 'No' }}</dd></div><div><dt>Children</dt><dd>{{ selectedWizard.children?.length ? selectedWizard.children.join(', ') : 'None listed' }}</dd></div></dl>
           </div>
         </div>
         <a class="source-link" href="https://github.com/behzadkazemi/HarryPotter" target="_blank" rel="noopener noreferrer">View source on GitHub</a>
@@ -102,12 +110,11 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
-import WizardBubbleField from './WizardBubbleField.vue'
+import { computed, onMounted, ref } from 'vue'
 
 type Mode = 'random-movie' | 'imdb' | 'got' | 'harry-potter'
 interface Movie { title: string; year: number; rank: number; imdbId: string }
-interface Person { name: string; house: string; sigil: string; description: string; image?: string; role?: string; wand?: string; patronus?: string; actor?: string; region?: string; status?: string }
+interface Person { name: string; house: string; sigil: string; description: string; image?: string; role?: string; wand?: string; patronus?: string; actor?: string; region?: string; status?: string; nickname?: string; hogwartsStudent?: boolean; children?: string[] }
 
 const path = window.location.pathname.replace(/\/+$/, '')
 const mode: Mode = path.endsWith('/random-movie-adviser') ? 'random-movie' : path.endsWith('/imdb-top-250') ? 'imdb' : path.endsWith('/game-of-thrones') ? 'got' : 'harry-potter'
@@ -147,17 +154,39 @@ const quotes = [
 ]
 const fetchQuote = () => { quote.value = quotes[Math.floor(Math.random() * quotes.length)] }
 
-const wizards: Person[] = [
-  { name: 'Harry Potter', house: 'Gryffindor', sigil: 'HP', image: 'https://ik.imagekit.io/hpapi/harry.jpg', role: 'Auror', wand: 'Holly, phoenix feather, 11 inches', patronus: 'Stag', description: 'The Boy Who Lived, known for courage, loyalty, and a talent for finding trouble.' },
-  { name: 'Hermione Granger', house: 'Gryffindor', sigil: 'HG', image: 'https://ik.imagekit.io/hpapi/hermione.jpeg', role: 'Minister for Magic', wand: 'Vine, dragon heartstring, 10¾ inches', patronus: 'Otter', description: 'A brilliant witch whose preparation and compassion repeatedly save the day.' },
-  { name: 'Draco Malfoy', house: 'Slytherin', sigil: 'DM', image: 'https://ik.imagekit.io/hpapi/draco.jpg', role: 'Slytherin student', wand: 'Hawthorn, unicorn hair, 10 inches', patronus: 'Unknown', description: 'A Slytherin student shaped by family expectations and difficult choices.' },
-  { name: 'Luna Lovegood', house: 'Ravenclaw', sigil: 'LL', image: 'https://ik.imagekit.io/hpapi/luna.jpg', role: 'Magizoologist', wand: 'Unknown', patronus: 'Hare', description: 'An original thinker with fierce loyalty and an unshakable sense of wonder.' },
-  { name: 'Cedric Diggory', house: 'Hufflepuff', sigil: 'CD', image: 'https://ik.imagekit.io/hpapi/cedric.png', role: 'Triwizard champion', wand: 'Ash, unicorn hair, 12¼ inches', patronus: 'Unknown', description: 'A fair-minded champion remembered for his generosity and integrity.' }
-]
 const houses = ['All', 'Gryffindor', 'Slytherin', 'Ravenclaw', 'Hufflepuff']
+const wizards = ref<Person[]>([])
+const wizardLoading = ref(true)
+const wizardError = ref('')
 const selectedHouse = ref('All')
 const selectedWizard = ref<Person | null>(null)
-const filteredWizards = computed(() => selectedHouse.value === 'All' ? wizards : wizards.filter((wizard) => wizard.house === selectedHouse.value))
+const filteredWizards = computed(() => selectedHouse.value === 'All' ? wizards.value : wizards.value.filter((wizard) => wizard.house === selectedHouse.value))
+
+const fetchWizards = async () => {
+  try {
+    const response = await fetch('https://harry-potter-api-en.onrender.com/characters')
+    if (!response.ok) throw new Error('Unable to load the character archive.')
+    const characters = await response.json()
+    wizards.value = characters.map((character: { character: string; nickname: string; hogwartsHouse: string; image: string; interpretedBy: string; hogwartsStudent: boolean; child: string[] }) => ({
+      name: character.character,
+      nickname: character.nickname,
+      house: character.hogwartsHouse || 'Unknown house',
+      image: character.image,
+      actor: character.interpretedBy || 'Unknown',
+      hogwartsStudent: character.hogwartsStudent,
+      children: character.child || [],
+      role: character.hogwartsStudent ? 'Hogwarts student' : 'Wizarding world character',
+      description: `${character.nickname || character.character} is a character from the Harry Potter universe.`,
+      sigil: character.nickname?.slice(0, 2).toUpperCase() || 'HP'
+    }))
+  } catch (requestError) {
+    wizardError.value = requestError instanceof Error ? requestError.message : 'Unable to load characters.'
+  } finally {
+    wizardLoading.value = false
+  }
+}
+
+onMounted(fetchWizards)
 </script>
 
 <style scoped>
