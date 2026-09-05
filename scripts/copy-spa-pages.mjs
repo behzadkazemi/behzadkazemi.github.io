@@ -12,4 +12,8 @@ mkdirSync(resolve(dist, 'weather-app'), { recursive: true })
 writeFileSync(resolve(dist, 'weather-app/index.html'), html)
 mkdirSync(resolve(dist, 'ito-ito-challenge'), { recursive: true })
 writeFileSync(resolve(dist, 'ito-ito-challenge/index.html'), html)
+for (const page of ['random-movie-adviser', 'imdb-top-250', 'game-of-thrones', 'harry-potter']) {
+	mkdirSync(resolve(dist, page), { recursive: true })
+	writeFileSync(resolve(dist, page, 'index.html'), html)
+}
 writeFileSync(resolve(dist, '404.html'), html)

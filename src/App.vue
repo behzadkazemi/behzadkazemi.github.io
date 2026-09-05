@@ -2,6 +2,7 @@
   <BmiCalculator v-if="isBmiPage" />
   <WeatherDemo v-else-if="isWeatherPage" />
   <ItoItoDemo v-else-if="isItoItoPage" />
+  <MediaDemos v-else-if="isMediaDemoPage" />
   <div v-else id="app" class="app">
     <Header />
     <Hero />
@@ -26,11 +27,13 @@ import Footer from './components/Footer.vue'
 import BmiCalculator from './components/BmiCalculator.vue'
 import WeatherDemo from './components/WeatherDemo.vue'
 import ItoItoDemo from './components/ItoItoDemo.vue'
+import MediaDemos from './components/MediaDemos.vue'
 
 const path = window.location.pathname.replace(/\/+$/, '')
 const isBmiPage = path.endsWith('/bmi-calculator')
 const isWeatherPage = path.endsWith('/weather-app')
 const isItoItoPage = path.endsWith('/ito-ito-challenge')
+const isMediaDemoPage = ['/random-movie-adviser', '/imdb-top-250', '/game-of-thrones', '/harry-potter'].some((route) => path.endsWith(route))
 </script>
 
 <style scoped>

@@ -138,7 +138,7 @@ const projects = ref<Project[]>([
     icon: '\uD83D\uDC09',
     technologies: ['JavaScript', 'HTML5', 'CSS3'],
     github: 'https://github.com/behzadkazemi/GOT',
-    live: 'https://behzadkazemi.github.io/GOT/'
+    live: '/game-of-thrones/'
   },
   {
     title: 'Harry Potter',
@@ -146,7 +146,7 @@ const projects = ref<Project[]>([
     icon: '\u26A1',
     technologies: ['JavaScript', 'HTML5', 'CSS3'],
     github: 'https://github.com/behzadkazemi/HarryPotter',
-    live: 'https://behzadkazemi.github.io/HarryPotter/'
+    live: '/harry-potter/'
   },
   {
     title: 'Ext JS Training',
@@ -170,7 +170,7 @@ const projects = ref<Project[]>([
     icon: '\uD83C\uDFAC',
     technologies: ['JavaScript', 'HTML5', 'CSS3'],
     github: 'https://github.com/behzadkazemi/Random-movie-adviser',
-    live: 'https://behzadkazemi.github.io/Random-movie-adviser/'
+    live: '/random-movie-adviser/'
   },
   {
     title: 'IMDb Top 250',
@@ -178,7 +178,7 @@ const projects = ref<Project[]>([
     icon: '\uD83C\uDFC6',
     technologies: ['JavaScript', 'HTML5', 'CSS3'],
     github: 'https://github.com/behzadkazemi/imdb-top-250',
-    live: 'https://behzadkazemi.github.io/imdb-top-250/'
+    live: '/imdb-top-250/'
   },
   {
     title: 'Personal Portfolio',
