@@ -22,7 +22,13 @@
                 </svg>
                 Code
               </a>
-              <a v-if="project.live" :href="project.live" target="_blank" rel="noopener noreferrer" class="project-link live">
+              <a
+                v-if="project.live"
+                :href="project.live"
+                :target="isExternal(project.live) ? '_blank' : undefined"
+                :rel="isExternal(project.live) ? 'noopener noreferrer' : undefined"
+                class="project-link live"
+              >
                 <svg class="icon" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
                 </svg>
@@ -42,6 +48,8 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 
+const isExternal = (url: string) => /^https?:\/\//.test(url)
+
 interface Project {
   title: string
   description: string
@@ -52,6 +60,14 @@ interface Project {
 }
 
 const projects = ref<Project[]>([
+  {
+    title: 'BMI Calculator',
+    description: 'Interactive Body Mass Index calculator. Enter weight and height to get your BMI and category, then use the live demo without leaving this site.',
+    icon: '⚖️',
+    technologies: ['React', 'TypeScript', 'Tailwind CSS', 'Vite'],
+    github: 'https://github.com/behzadkazemi/BMI-Calculator',
+    live: '/bmi-calculator/'
+  },
   {
     title: 'Personal Portfolio',
     description: 'A modern, responsive portfolio website built with Vue 3 and TypeScript. Showcases projects, skills, and experience with a smooth, animated user interface.',
