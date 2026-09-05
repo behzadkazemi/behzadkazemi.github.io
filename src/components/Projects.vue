@@ -69,6 +69,104 @@ const projects = ref<Project[]>([
     live: '/bmi-calculator/'
   },
   {
+    title: 'Weather App',
+    description: 'A weather application for checking current conditions and forecasts through a focused, responsive interface.',
+    icon: '\u2601\uFE0F',
+    technologies: ['JavaScript', 'Weather API', 'CSS3'],
+    github: 'https://github.com/behzadkazemi/WeatherApp'
+  },
+  {
+    title: 'Ito-Ito Code Challenge',
+    description: 'A coding challenge project demonstrating practical frontend problem-solving and interactive user interface work.',
+    icon: '\uD83E\uDDE9',
+    technologies: ['JavaScript', 'HTML5', 'CSS3'],
+    github: 'https://github.com/behzadkazemi/behzad-itoito-code-challengee'
+  },
+  {
+    title: 'Color Challenge',
+    description: 'An interactive color-based challenge built around quick decisions, visual feedback, and playful browser interactions.',
+    icon: '\uD83C\uDFA8',
+    technologies: ['JavaScript', 'HTML5', 'CSS3'],
+    github: 'https://github.com/behzadkazemi/Color-Challenge'
+  },
+  {
+    title: 'Income Tracker',
+    description: 'A practical browser tool for recording income and keeping personal financial information organized.',
+    icon: '\uD83D\uDCC8',
+    technologies: ['JavaScript', 'HTML5', 'CSS3'],
+    github: 'https://github.com/behzadkazemi/IncomeTracker'
+  },
+  {
+    title: 'Queen Burger',
+    description: 'A restaurant website concept with an engaging menu experience and responsive presentation for burger lovers.',
+    icon: '\uD83C\uDF54',
+    technologies: ['JavaScript', 'HTML5', 'CSS3'],
+    github: 'https://github.com/behzadkazemi/queenBurger'
+  },
+  {
+    title: 'Berlin Budget Secrets',
+    description: 'A city-focused project exploring useful budget ideas and accessible information for life in Berlin.',
+    icon: '\uD83C\uDFD9\uFE0F',
+    technologies: ['JavaScript', 'HTML5', 'CSS3'],
+    github: 'https://github.com/behzadkazemi/BerlinBudgetSecrets'
+  },
+  {
+    title: 'MultiLanguage Form',
+    description: 'A multilingual form experience designed to make data entry clearer and more accessible across languages.',
+    icon: '\uD83C\uDF0D',
+    technologies: ['JavaScript', 'HTML5', 'CSS3'],
+    github: 'https://github.com/behzadkazemi/MultiLanguage-From'
+  },
+  {
+    title: 'To-Do List',
+    description: 'A simple task management application for adding, organizing, and completing everyday tasks.',
+    icon: '\u2705',
+    technologies: ['JavaScript', 'HTML5', 'CSS3'],
+    github: 'https://github.com/behzadkazemi/to-do-list'
+  },
+  {
+    title: 'Game of Thrones',
+    description: 'A themed project inspired by Game of Thrones, showcasing content presentation and interactive frontend work.',
+    icon: '\uD83D\uDC09',
+    technologies: ['JavaScript', 'HTML5', 'CSS3'],
+    github: 'https://github.com/behzadkazemi/GOT'
+  },
+  {
+    title: 'Harry Potter',
+    description: 'A themed Harry Potter project demonstrating creative interface design and responsive web presentation.',
+    icon: '\u26A1',
+    technologies: ['JavaScript', 'HTML5', 'CSS3'],
+    github: 'https://github.com/behzadkazemi/HarryPotter'
+  },
+  {
+    title: 'Ext JS Training',
+    description: 'Training work exploring Ext JS components, layouts, and application patterns.',
+    icon: '\uD83D\uDEE0\uFE0F',
+    technologies: ['Ext JS', 'JavaScript', 'HTML5'],
+    github: 'https://github.com/behzadkazemi/ExtJsTraining'
+  },
+  {
+    title: 'Question Answering Tool',
+    description: 'A question-and-answer interface focused on presenting information through a clear and direct workflow.',
+    icon: '\u2753',
+    technologies: ['JavaScript', 'HTML5', 'CSS3'],
+    github: 'https://github.com/behzadkazemi/Question-Answering-Tool'
+  },
+  {
+    title: 'Random Movie Adviser',
+    description: 'A lightweight movie discovery tool that suggests a random film for the next viewing session.',
+    icon: '\uD83C\uDFAC',
+    technologies: ['JavaScript', 'HTML5', 'CSS3'],
+    github: 'https://github.com/behzadkazemi/Random-movie-adviser'
+  },
+  {
+    title: 'IMDb Top 250',
+    description: "A movie browsing project presenting titles from IMDb's highly rated Top 250 collection.",
+    icon: '\uD83C\uDFC6',
+    technologies: ['JavaScript', 'HTML5', 'CSS3'],
+    github: 'https://github.com/behzadkazemi/imdb-top-250'
+  },
+  {
     title: 'Personal Portfolio',
     description: 'A modern, responsive portfolio website built with Vue 3 and TypeScript. Showcases projects, skills, and experience with a smooth, animated user interface.',
     icon: '💼',
