@@ -4,8 +4,7 @@
     <div
       v-for="bubble in bubbles"
       :key="bubble.id"
-      class="liquid-bubble"
-      :class="`bubble-${bubble.palette}`"
+      :class="[`bubble-${bubble.palette}`, { 'has-character': bubble.character }]"
       :style="bubbleStyle(bubble)"
     >
       <span></span>
@@ -35,6 +34,10 @@ interface Bubble {
   offsetX: number
   offsetY: number
   scale: number
+  driftX?: number
+  driftY?: number
+  driftDuration?: number
+  driftDelay?: number
   character?: PreviewCharacter
 }
 
@@ -49,6 +52,13 @@ const bubbles = ref<Bubble[]>([
   { id: 7, baseX: 67, baseY: 79, size: 25, palette: 1, offsetX: 0, offsetY: 0, scale: 1 }
 ])
 
+bubbles.value.forEach((bubble) => {
+  bubble.driftX = -18 + Math.random() * 36
+  bubble.driftY = -18 + Math.random() * 36
+  bubble.driftDuration = 5 + Math.random() * 4
+  bubble.driftDelay = Math.random() * -6
+})
+
 if (props.characters?.length) {
   bubbles.value.forEach((bubble) => {
     bubble.character = props.characters![Math.floor(Math.random() * props.characters!.length)]
@@ -60,7 +70,11 @@ const bubbleStyle = (bubble: Bubble) => ({
   top: `${bubble.baseY + bubble.offsetY}%`,
   width: `${bubble.size}px`,
   height: `${bubble.size}px`,
-  transform: `translate(-50%, -50%) scale(${bubble.scale})`
+  transform: `translate(-50%, -50%) scale(${bubble.scale})`,
+  '--drift-x': `${bubble.driftX || 0}px`,
+  '--drift-y': `${bubble.driftY || 0}px`,
+  '--drift-duration': `${bubble.driftDuration || 6}s`,
+  '--drift-delay': `${bubble.driftDelay || 0}s`
 })
 
 const handlePointerMove = (event: PointerEvent) => {
@@ -129,7 +143,7 @@ const resetBubbles = () => {
   box-shadow: inset -8px -10px 14px rgba(0, 0, 0, 0.24), inset 8px 7px 12px rgba(255, 255, 255, 0.32), 0 8px 18px rgba(0, 0, 0, 0.28);
   opacity: 0.92;
   transition: left 0.35s ease-out, top 0.35s ease-out, transform 0.35s ease-out;
-  animation: liquid-float 5s ease-in-out infinite;
+  animation: liquid-float var(--drift-duration) ease-in-out var(--drift-delay) infinite;
 }
 
 .liquid-bubble::before {
@@ -155,16 +169,17 @@ const resetBubbles = () => {
   background: rgba(255, 255, 255, 0.35);
 }
 
-.liquid-bubble img {
+.liquid-bubble.has-character img {
   width: 100%;
   height: 100%;
   border-radius: 50%;
-  object-fit: cover;
-  opacity: 0.78;
-  mix-blend-mode: screen;
+  object-fit: contain;
+  padding: 8%;
+  opacity: 1;
+  mix-blend-mode: normal;
 }
 
-.liquid-bubble strong {
+.liquid-bubble.has-character strong {
   position: absolute;
   right: 3px;
   bottom: 8px;
@@ -201,8 +216,10 @@ const resetBubbles = () => {
 }
 
 @keyframes liquid-float {
-  0%, 100% { margin-top: 0; }
-  50% { margin-top: -7px; }
+  0%, 100% { margin: 0; }
+  25% { margin-left: var(--drift-x); margin-top: var(--drift-y); }
+  50% { margin-left: calc(var(--drift-x) * -1); margin-top: calc(var(--drift-y) * -1); }
+  75% { margin-left: calc(var(--drift-x) * 0.5); margin-top: calc(var(--drift-y) * 0.5); }
 }
 
 @media (prefers-reduced-motion: reduce) {
