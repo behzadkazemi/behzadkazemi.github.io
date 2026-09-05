@@ -1,5 +1,6 @@
 <template>
   <BmiCalculator v-if="isBmiPage" />
+  <WeatherDemo v-else-if="isWeatherPage" />
   <div v-else id="app" class="app">
     <Header />
     <Hero />
@@ -22,9 +23,11 @@ import Projects from './components/Projects.vue'
 import Contact from './components/Contact.vue'
 import Footer from './components/Footer.vue'
 import BmiCalculator from './components/BmiCalculator.vue'
+import WeatherDemo from './components/WeatherDemo.vue'
 
 const path = window.location.pathname.replace(/\/+$/, '')
 const isBmiPage = path.endsWith('/bmi-calculator')
+const isWeatherPage = path.endsWith('/weather-app')
 </script>
 
 <style scoped>

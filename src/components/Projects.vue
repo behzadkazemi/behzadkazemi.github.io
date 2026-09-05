@@ -74,7 +74,7 @@ const projects = ref<Project[]>([
     icon: '\u2601\uFE0F',
     technologies: ['JavaScript', 'Weather API', 'CSS3'],
     github: 'https://github.com/behzadkazemi/WeatherApp',
-    live: 'https://behzadkazemi.github.io/WeatherApp/'
+    live: '/weather-app/'
   },
   {
     title: 'Ito-Ito Code Challenge',
