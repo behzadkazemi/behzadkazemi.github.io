@@ -7,7 +7,7 @@
       <div class="projects-grid">
         <div class="project-card fade-in-up" v-for="(project, index) in projects" :key="index" :style="{ animationDelay: `${index * 0.15}s` }">
           <div class="project-image">
-            <LiquidPreview :title="project.title" :index="index" />
+            <LiquidPreview :title="project.title" :index="index" :characters="project.previewCharacters" />
           </div>
           <div class="project-content">
             <h3>{{ project.title }}</h3>
@@ -58,7 +58,21 @@ interface Project {
   technologies: string[]
   github?: string
   live?: string
+  previewCharacters?: PreviewCharacter[]
 }
+
+interface PreviewCharacter {
+  name: string
+  image: string
+}
+
+const harryPotterPreviewCharacters: PreviewCharacter[] = [
+  { name: 'Harry Potter', image: 'https://ik.imagekit.io/hpapi/harry.jpg' },
+  { name: 'Hermione Granger', image: 'https://ik.imagekit.io/hpapi/hermione.jpeg' },
+  { name: 'Draco Malfoy', image: 'https://ik.imagekit.io/hpapi/draco.jpg' },
+  { name: 'Luna Lovegood', image: 'https://ik.imagekit.io/hpapi/luna.jpg' },
+  { name: 'Cedric Diggory', image: 'https://ik.imagekit.io/hpapi/cedric.png' }
+]
 
 const projects = ref<Project[]>([
   {
@@ -147,7 +161,8 @@ const projects = ref<Project[]>([
     icon: '\u26A1',
     technologies: ['JavaScript', 'HTML5', 'CSS3'],
     github: 'https://github.com/behzadkazemi/HarryPotter',
-    live: '/harry-potter/'
+    live: '/harry-potter/',
+    previewCharacters: harryPotterPreviewCharacters
   },
   {
     title: 'Ext JS Training',

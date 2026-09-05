@@ -9,6 +9,8 @@
       :style="bubbleStyle(bubble)"
     >
       <span></span>
+      <img v-if="bubble.character" :src="bubble.character.image" :alt="`${bubble.character.name} portrait`" />
+      <strong v-if="bubble.character">{{ bubble.character.name }}</strong>
     </div>
     <div class="preview-label">{{ title }}</div>
   </div>
@@ -17,7 +19,12 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 
-defineProps<{ title: string; index: number }>()
+interface PreviewCharacter {
+  name: string
+  image: string
+}
+
+const props = defineProps<{ title: string; index: number; characters?: PreviewCharacter[] }>()
 
 interface Bubble {
   id: number
@@ -28,6 +35,7 @@ interface Bubble {
   offsetX: number
   offsetY: number
   scale: number
+  character?: PreviewCharacter
 }
 
 const preview = ref<HTMLElement | null>(null)
@@ -40,6 +48,12 @@ const bubbles = ref<Bubble[]>([
   { id: 6, baseX: 25, baseY: 82, size: 20, palette: 3, offsetX: 0, offsetY: 0, scale: 1 },
   { id: 7, baseX: 67, baseY: 79, size: 25, palette: 1, offsetX: 0, offsetY: 0, scale: 1 }
 ])
+
+if (props.characters?.length) {
+  bubbles.value.forEach((bubble) => {
+    bubble.character = props.characters![Math.floor(Math.random() * props.characters!.length)]
+  })
+}
 
 const bubbleStyle = (bubble: Bubble) => ({
   left: `${bubble.baseX + bubble.offsetX}%`,
@@ -139,6 +153,31 @@ const resetBubbles = () => {
   height: 14%;
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.35);
+}
+
+.liquid-bubble img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  opacity: 0.78;
+  mix-blend-mode: screen;
+}
+
+.liquid-bubble strong {
+  position: absolute;
+  right: 3px;
+  bottom: 8px;
+  left: 3px;
+  z-index: 2;
+  overflow: hidden;
+  color: #fff;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.48rem;
+  text-align: center;
+  text-overflow: ellipsis;
+  text-shadow: 0 1px 4px #000;
+  white-space: nowrap;
 }
 
 .bubble-1 { background: radial-gradient(circle at 32% 25%, #fff0a8, #ff5fc8 42%, #a61dff 78%); }
