@@ -7,13 +7,7 @@
       <div class="projects-grid">
         <div class="project-card fade-in-up" v-for="(project, index) in projects" :key="index" :style="{ animationDelay: `${index * 0.15}s` }">
           <div class="project-image">
-            <img
-              v-if="project.live"
-              :src="previewUrl(project)"
-              :alt="`${project.title} live demo preview`"
-              @error="hidePreview"
-            />
-            <div class="image-fallback">{{ project.title }}</div>
+            <LiquidPreview :title="project.title" :index="index" />
           </div>
           <div class="project-content">
             <h3>{{ project.title }}</h3>
@@ -53,6 +47,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import LiquidPreview from './LiquidPreview.vue'
 
 const isExternal = (url: string) => /^https?:\/\//.test(url)
 
@@ -63,17 +58,6 @@ interface Project {
   technologies: string[]
   github?: string
   live?: string
-}
-
-const previewUrl = (project: Project) => {
-  const liveUrl = isExternal(project.live || '')
-    ? project.live
-    : `https://behzadkazemi.github.io${project.live}`
-  return `https://image.thum.io/get/width/1200/crop/500/${liveUrl}`
-}
-
-const hidePreview = (event: Event) => {
-  (event.target as HTMLImageElement).style.display = 'none'
 }
 
 const projects = ref<Project[]>([
@@ -281,45 +265,6 @@ const projects = ref<Project[]>([
   justify-content: center;
   position: relative;
   overflow: hidden;
-}
-
-.project-image::before {
-  content: '';
-  position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.1) 50%, transparent 70%);
-  animation: shine 3s infinite;
-}
-
-.project-image img {
-  position: relative;
-  z-index: 1;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: top center;
-  transition: transform 0.4s ease;
-}
-
-.project-card:hover .project-image img {
-  transform: scale(1.04);
-}
-
-.image-fallback {
-  position: absolute;
-  inset: 0;
-  display: grid;
-  place-items: center;
-  padding: 24px;
-  color: var(--primary);
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 1rem;
-  letter-spacing: 0.08em;
-  text-align: center;
-  text-transform: uppercase;
 }
 
 .project-content {
