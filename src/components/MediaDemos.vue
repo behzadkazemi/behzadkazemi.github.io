@@ -7,10 +7,25 @@
         <p class="eyebrow">Project demo / React original</p>
         <h1>Random Movie Adviser</h1>
         <p class="lead">Need something good to watch? Roll the dice for a title from the IMDb Top 250.</p>
-        <div class="movie-pick">
-          <p class="rank">{{ randomMovie ? `Rank #${randomMovie.rank}` : 'Ready when you are' }}</p>
-          <h2>{{ randomMovie?.title || 'Your next movie' }}</h2>
-          <p class="year">{{ randomMovie ? randomMovie.year : 'A random recommendation awaits' }}</p>
+        <div class="movie-pick" :class="{ empty: !randomMovie }">
+          <template v-if="randomMovie">
+            <img class="movie-poster" :src="posterUrl(randomMovie)" :alt="`${randomMovie.title} poster`" @error="hidePoster" />
+            <div class="movie-details">
+              <p class="rank">Rank #{{ randomMovie.rank }}</p>
+              <h2>{{ randomMovie.title }}</h2>
+              <p class="year">Released {{ randomMovie.year }}</p>
+              <p class="detail-copy">A highly rated classic selected from the IMDb Top 250 collection.</p>
+              <a class="imdb-link" :href="`https://www.imdb.com/title/${randomMovie.imdbId}/`" target="_blank" rel="noopener noreferrer">View IMDb details &rarr;</a>
+            </div>
+          </template>
+          <template v-else>
+            <div class="empty-poster">?</div>
+            <div class="movie-details">
+              <p class="rank">Ready when you are</p>
+              <h2>Your next movie</h2>
+              <p class="year">A random recommendation awaits</p>
+            </div>
+          </template>
         </div>
         <button class="primary-button dice-button" type="button" @click="pickMovie">Roll the dice</button>
         <a class="source-link" href="https://github.com/behzadkazemi/Random-movie-adviser" target="_blank" rel="noopener noreferrer">View source on GitHub</a>
@@ -77,27 +92,29 @@
 import { computed, ref } from 'vue'
 
 type Mode = 'random-movie' | 'imdb' | 'got' | 'harry-potter'
-interface Movie { title: string; year: number; rank: number }
+interface Movie { title: string; year: number; rank: number; imdbId: string }
 interface Person { name: string; house: string; sigil: string; description: string }
 
 const path = window.location.pathname.replace(/\/+$/, '')
 const mode: Mode = path.endsWith('/random-movie-adviser') ? 'random-movie' : path.endsWith('/imdb-top-250') ? 'imdb' : path.endsWith('/game-of-thrones') ? 'got' : 'harry-potter'
 const movies: Movie[] = [
-  { title: 'The Shawshank Redemption', year: 1994, rank: 1 },
-  { title: 'The Godfather', year: 1972, rank: 2 },
-  { title: 'The Dark Knight', year: 2008, rank: 3 },
-  { title: 'The Godfather Part II', year: 1974, rank: 4 },
-  { title: '12 Angry Men', year: 1957, rank: 5 },
-  { title: "Schindler's List", year: 1993, rank: 6 },
-  { title: 'The Lord of the Rings: The Return of the King', year: 2003, rank: 7 },
-  { title: 'Pulp Fiction', year: 1994, rank: 8 },
-  { title: 'The Good, the Bad and the Ugly', year: 1966, rank: 9 },
-  { title: 'The Lord of the Rings: The Fellowship of the Ring', year: 2001, rank: 10 }
+  { title: 'The Shawshank Redemption', year: 1994, rank: 1, imdbId: 'tt0111161' },
+  { title: 'The Godfather', year: 1972, rank: 2, imdbId: 'tt0068646' },
+  { title: 'The Dark Knight', year: 2008, rank: 3, imdbId: 'tt0468569' },
+  { title: 'The Godfather Part II', year: 1974, rank: 4, imdbId: 'tt0071562' },
+  { title: '12 Angry Men', year: 1957, rank: 5, imdbId: 'tt0050083' },
+  { title: "Schindler's List", year: 1993, rank: 6, imdbId: 'tt0108052' },
+  { title: 'The Lord of the Rings: The Return of the King', year: 2003, rank: 7, imdbId: 'tt0167260' },
+  { title: 'Pulp Fiction', year: 1994, rank: 8, imdbId: 'tt0110912' },
+  { title: 'The Good, the Bad and the Ugly', year: 1966, rank: 9, imdbId: 'tt0060196' },
+  { title: 'The Lord of the Rings: The Fellowship of the Ring', year: 2001, rank: 10, imdbId: 'tt0120737' }
 ]
 const randomMovie = ref<Movie | null>(null)
 const movieSearch = ref('')
 const filteredMovies = computed(() => movies.filter((movie) => movie.title.toLowerCase().includes(movieSearch.value.toLowerCase())))
 const pickMovie = () => { randomMovie.value = movies[Math.floor(Math.random() * movies.length)] }
+const posterUrl = (movie: Movie) => `https://images.metahub.space/poster/medium/${movie.imdbId}/img`
+const hidePoster = (event: Event) => { (event.target as HTMLImageElement).style.visibility = 'hidden' }
 
 const gotCharacters: Person[] = [
   { name: 'Jon Snow', house: 'House Stark', sigil: 'ST', description: 'The reluctant hero of the North, raised at Winterfell and bound by duty.' },
@@ -139,8 +156,15 @@ const filteredWizards = computed(() => selectedHouse.value === 'All' ? wizards :
 h1 { margin: 0 0 12px; font-size: clamp(2.2rem, 7vw, 4.6rem); line-height: 1.05; }
 h2 { margin: 0; }
 .lead { max-width: 620px; margin: 0 0 30px; color: #b9b4a9; line-height: 1.7; }
-.movie-pick { margin: 32px 0; padding: 38px 24px; border: 1px solid rgba(214,179,106,.35); text-align: center; background: radial-gradient(circle at 50% 0, rgba(214,179,106,.13), transparent 65%); }
+.movie-pick { display: flex; align-items: center; gap: 28px; margin: 32px 0; padding: 28px; border: 1px solid rgba(214,179,106,.35); background: radial-gradient(circle at 50% 0, rgba(214,179,106,.13), transparent 65%); }
+.movie-pick.empty { justify-content: center; text-align: center; }
 .movie-pick h2 { font-size: clamp(1.8rem, 5vw, 3rem); }
+.movie-poster, .empty-poster { flex: 0 0 150px; width: 150px; height: 222px; border: 1px solid rgba(214,179,106,.45); border-radius: 3px; object-fit: cover; background: #302c28; }
+.empty-poster { display: grid; place-items: center; color: #d6b36a; font-size: 4rem; }
+.movie-details { flex: 1; }
+.movie-details h2 { margin-bottom: 10px; }
+.detail-copy { color: #b9b4a9; line-height: 1.6; }
+.imdb-link { color: #d6b36a; font-weight: 700; }
 .rank, .year { color: #d6b36a; font-family: 'IBM Plex Mono', monospace; font-size: .78rem; text-transform: uppercase; }
 .dice-button, .primary-button { border: 0; border-radius: 3px; padding: 13px 20px; background: #d6b36a; color: #171719; font-weight: 800; cursor: pointer; }
 .source-link { display: inline-block; margin-top: 28px; }
@@ -165,5 +189,5 @@ input { width: 100%; padding: 14px; border: 1px solid #4a4847; border-radius: 3p
 blockquote { margin: 18px auto; max-width: 600px; font-size: clamp(1.4rem, 4vw, 2.2rem); line-height: 1.35; }
 .quote-author { color: #d6b36a; }
 .empty-message { color: #b9b4a9; }
-@media (max-width: 560px) { .media-page { padding: 48px 16px; } .character-grid, .wizard-grid { grid-template-columns: 1fr; } .movie-pick { padding: 30px 14px; } }
+@media (max-width: 560px) { .media-page { padding: 48px 16px; } .character-grid, .wizard-grid { grid-template-columns: 1fr; } .movie-pick { flex-direction: column; padding: 24px 14px; text-align: center; } .movie-poster, .empty-poster { flex-basis: 190px; width: 128px; height: 190px; } }
 </style>
