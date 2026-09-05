@@ -263,4 +263,26 @@ input:focus {
   background: var(--success);
 }
 
-.dot.
+.dot.overweight {
+  background: #f59e0b;
+}
+
+.dot.obesity {
+  background: var(--error);
+}
+
+.disclaimer {
+  margin: 24px 0 0;
+  font-size: 0.85rem;
+}
+
+@media (max-width: 768px) {
+  .bmi-card {
+    padding: 24px;
+  }
+
+  .bmi-card h1 {
+    font-size: 1.8rem;
+  }
+}
+</style>

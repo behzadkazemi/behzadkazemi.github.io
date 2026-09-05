@@ -8,4 +8,4 @@ const html = readFileSync(resolve(dist, 'index.html'), 'utf8')
 
 mkdirSync(resolve(dist, 'bmi-calculator'), { recursive: true })
 writeFileSync(resolve(dist, 'bmi-calculator/index.html'), html)
-writeFileSync(resolve(dist, '404.html
+writeFileSync(resolve(dist, '404.html'), html)
