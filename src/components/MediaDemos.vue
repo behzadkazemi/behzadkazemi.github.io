@@ -56,7 +56,8 @@
         </div>
         <div v-if="gotTab === 'Characters'" class="character-grid">
           <button v-for="person in gotCharacters" :key="person.name" type="button" class="character" @click="selectedCharacter = person">
-            <span class="sigil">{{ person.sigil }}</span><strong>{{ person.name }}</strong><small>{{ person.house }}</small>
+            <img :src="person.image" :alt="`${person.name} portrait`" />
+            <span class="character-copy"><strong>{{ person.name }}</strong><small>{{ person.house }}</small></span>
           </button>
         </div>
         <div v-else class="quote-box">
@@ -65,7 +66,15 @@
           <p class="quote-author">{{ quote.author }}</p>
           <button class="primary-button" type="button" @click="fetchQuote">Fetch another quote</button>
         </div>
-        <div v-if="selectedCharacter && gotTab === 'Characters'" class="character-detail"><strong>{{ selectedCharacter.name }}</strong><span>{{ selectedCharacter.description }}</span></div>
+        <div v-if="selectedCharacter && gotTab === 'Characters'" class="character-detail">
+          <img :src="selectedCharacter.image" :alt="`${selectedCharacter.name} portrait`" />
+          <div>
+            <span class="eyebrow">Character profile</span>
+            <h2>{{ selectedCharacter.name }}</h2>
+            <p>{{ selectedCharacter.description }}</p>
+            <dl><div><dt>House</dt><dd>{{ selectedCharacter.house }}</dd></div><div><dt>Played by</dt><dd>{{ selectedCharacter.actor }}</dd></div><div><dt>Region</dt><dd>{{ selectedCharacter.region }}</dd></div><div><dt>Status</dt><dd>{{ selectedCharacter.status }}</dd></div></dl>
+          </div>
+        </div>
         <a class="source-link" href="https://github.com/behzadkazemi/GOT" target="_blank" rel="noopener noreferrer">View source on GitHub</a>
       </section>
 
@@ -102,7 +111,7 @@ import { computed, ref } from 'vue'
 
 type Mode = 'random-movie' | 'imdb' | 'got' | 'harry-potter'
 interface Movie { title: string; year: number; rank: number; imdbId: string }
-interface Person { name: string; house: string; sigil: string; description: string; image?: string; role?: string; wand?: string; patronus?: string }
+interface Person { name: string; house: string; sigil: string; description: string; image?: string; role?: string; wand?: string; patronus?: string; actor?: string; region?: string; status?: string }
 
 const path = window.location.pathname.replace(/\/+$/, '')
 const mode: Mode = path.endsWith('/random-movie-adviser') ? 'random-movie' : path.endsWith('/imdb-top-250') ? 'imdb' : path.endsWith('/game-of-thrones') ? 'got' : 'harry-potter'
@@ -126,10 +135,10 @@ const posterUrl = (movie: Movie) => `https://images.metahub.space/poster/medium/
 const hidePoster = (event: Event) => { (event.target as HTMLImageElement).style.visibility = 'hidden' }
 
 const gotCharacters: Person[] = [
-  { name: 'Jon Snow', house: 'House Stark', sigil: 'ST', description: 'The reluctant hero of the North, raised at Winterfell and bound by duty.' },
-  { name: 'Daenerys Targaryen', house: 'House Targaryen', sigil: 'TG', description: 'The Dragon Queen, determined to reclaim the throne of Westeros.' },
-  { name: 'Tyrion Lannister', house: 'House Lannister', sigil: 'LI', description: 'A sharp-minded strategist whose wit is as formidable as any sword.' },
-  { name: 'Arya Stark', house: 'House Stark', sigil: 'ST', description: 'A fiercely independent survivor trained to move unseen.' }
+  { name: 'Jon Snow', house: 'House Stark', sigil: 'ST', image: 'https://upload.wikimedia.org/wikipedia/commons/5/56/Jon_Snow_White_cosplayer_%2835678959046%29.jpg', actor: 'Kit Harington', region: 'The North', status: 'King in the North', description: 'The reluctant hero of the North, raised at Winterfell and bound by duty.' },
+  { name: 'Daenerys Targaryen', house: 'House Targaryen', sigil: 'TG', image: 'https://upload.wikimedia.org/wikipedia/commons/5/56/Daenerys.jpg', actor: 'Emilia Clarke', region: 'Dragonstone', status: 'Queen claimant', description: 'The Dragon Queen, determined to reclaim the throne of Westeros.' },
+  { name: 'Tyrion Lannister', house: 'House Lannister', sigil: 'LI', image: 'https://ui-avatars.com/api/?name=Tyrion+Lannister&size=700&background=6b2737&color=fff&bold=true', actor: 'Peter Dinklage', region: 'The Westerlands', status: 'Hand of the King', description: 'A sharp-minded strategist whose wit is as formidable as any sword.' },
+  { name: 'Arya Stark', house: 'House Stark', sigil: 'ST', image: 'https://upload.wikimedia.org/wikipedia/commons/3/36/Arya_Stark_in_MultiVersus_1.png', actor: 'Maisie Williams', region: 'The North', status: 'Faceless assassin', description: 'A fiercely independent survivor trained to move unseen.' }
 ]
 const gotTab = ref('Characters')
 const selectedCharacter = ref<Person | null>(null)
@@ -191,10 +200,14 @@ input { width: 100%; padding: 14px; border: 1px solid #4a4847; border-radius: 3p
 .character, .wizard { display: grid; justify-items: start; gap: 4px; padding: 16px; border: 1px solid #494144; border-radius: 4px; background: rgba(255,255,255,.03); color: #f4f1e8; text-align: left; cursor: pointer; }
 .character:hover, .wizard:hover { border-color: #d6b36a; }
 .sigil, .wizard-mark { color: #d6b36a; font-size: 1.4rem; }
+.character { grid-template-columns: 72px 1fr; align-items: center; }
+.character img { width: 72px; height: 96px; border-radius: 3px; object-fit: cover; background: #3b3633; }
+.character-copy { display: block; }
 .wizard { grid-template-columns: 72px 1fr; align-items: center; }
 .wizard img { width: 72px; height: 96px; border-radius: 3px; object-fit: cover; background: #3b3633; }
 .wizard-copy { display: block; }
 .character-detail, .wizard-detail { display: grid; grid-template-columns: 150px 1fr; gap: 22px; margin-top: 18px; padding: 18px; border-left: 3px solid #d6b36a; background: rgba(214,179,106,.08); }
+.character-detail > img { width: 150px; height: 200px; border-radius: 3px; object-fit: cover; background: #3b3633; }
 .wizard-detail > img { width: 150px; height: 200px; border-radius: 3px; object-fit: cover; background: #3b3633; }
 .character-detail span, .wizard-detail p { margin: 0; color: #b9b4a9; line-height: 1.6; }
 dl { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin: 20px 0 0; }
@@ -205,5 +218,5 @@ dd { margin: 2px 0 0; color: #f4f1e8; font-size: .88rem; }
 blockquote { margin: 18px auto; max-width: 600px; font-size: clamp(1.4rem, 4vw, 2.2rem); line-height: 1.35; }
 .quote-author { color: #d6b36a; }
 .empty-message { color: #b9b4a9; }
-@media (max-width: 560px) { .media-page { padding: 48px 16px; } .character-grid, .wizard-grid { grid-template-columns: 1fr; } .movie-pick { flex-direction: column; padding: 24px 14px; text-align: center; } .movie-poster, .empty-poster { flex-basis: 190px; width: 128px; height: 190px; } .wizard-detail { grid-template-columns: 1fr; } .wizard-detail > img { width: 128px; height: 170px; } dl { grid-template-columns: 1fr; } }
+@media (max-width: 560px) { .media-page { padding: 48px 16px; } .character-grid, .wizard-grid { grid-template-columns: 1fr; } .movie-pick { flex-direction: column; padding: 24px 14px; text-align: center; } .movie-poster, .empty-poster { flex-basis: 190px; width: 128px; height: 190px; } .character-detail, .wizard-detail { grid-template-columns: 1fr; } .character-detail > img, .wizard-detail > img { width: 128px; height: 170px; } dl { grid-template-columns: 1fr; } }
 </style>
