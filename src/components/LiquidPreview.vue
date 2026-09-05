@@ -10,7 +10,7 @@
     >
       <span></span>
       <img v-if="bubble.character" :src="bubble.character.image" :alt="`${bubble.character.name} portrait`" />
-      <strong v-if="bubble.character">{{ bubble.character.name }}</strong>
+      <strong v-else-if="bubble.icon">{{ bubble.icon }}</strong>
     </div>
     <div class="preview-label">{{ title }}</div>
   </div>
@@ -24,7 +24,7 @@ interface PreviewCharacter {
   image: string
 }
 
-const props = defineProps<{ title: string; index: number; characters?: PreviewCharacter[] }>()
+const props = defineProps<{ title: string; index: number; characters?: PreviewCharacter[]; icons?: string[]; bubbleCount?: number }>()
 
 interface Bubble {
   id: number
@@ -38,22 +38,32 @@ interface Bubble {
   driftX: number
   driftY: number
   character?: PreviewCharacter
+  icon?: string
 }
 
 const preview = ref<HTMLElement | null>(null)
-const bubbles = ref<Bubble[]>([
-  { id: 1, baseX: 16, baseY: 26, size: 44, palette: 1, offsetX: 0, offsetY: 0, scale: 1, driftX: 0, driftY: 0 },
-  { id: 2, baseX: 38, baseY: 66, size: 30, palette: 2, offsetX: 0, offsetY: 0, scale: 1, driftX: 0, driftY: 0 },
-  { id: 3, baseX: 58, baseY: 27, size: 62, palette: 3, offsetX: 0, offsetY: 0, scale: 1, driftX: 0, driftY: 0 },
-  { id: 4, baseX: 78, baseY: 67, size: 39, palette: 4, offsetX: 0, offsetY: 0, scale: 1, driftX: 0, driftY: 0 },
-  { id: 5, baseX: 87, baseY: 24, size: 24, palette: 5, offsetX: 0, offsetY: 0, scale: 1, driftX: 0, driftY: 0 },
-  { id: 6, baseX: 25, baseY: 82, size: 20, palette: 3, offsetX: 0, offsetY: 0, scale: 1, driftX: 0, driftY: 0 },
-  { id: 7, baseX: 67, baseY: 79, size: 25, palette: 1, offsetX: 0, offsetY: 0, scale: 1, driftX: 0, driftY: 0 }
-])
+const bubbles = ref<Bubble[]>(Array.from({ length: props.bubbleCount || 7 }, (_, index) => ({
+  id: index,
+  baseX: 12 + Math.random() * 76,
+  baseY: 18 + Math.random() * 64,
+  size: 50 + Math.random() * 42,
+  palette: (index % 5) + 1,
+  offsetX: 0,
+  offsetY: 0,
+  scale: 1,
+  driftX: 0,
+  driftY: 0
+})))
 
 if (props.characters?.length) {
   bubbles.value.forEach((bubble) => {
     bubble.character = props.characters![Math.floor(Math.random() * props.characters!.length)]
+  })
+}
+
+if (props.icons?.length) {
+  bubbles.value.forEach((bubble, index) => {
+    bubble.icon = props.icons![index % props.icons!.length]
   })
 }
 
@@ -111,7 +121,7 @@ const moveBubbles = () => {
 
 onMounted(() => {
   moveBubbles()
-  driftTimer = window.setInterval(moveBubbles, 2600)
+  driftTimer = window.setInterval(moveBubbles, 1300)
 })
 
 onBeforeUnmount(() => {
@@ -195,7 +205,7 @@ onBeforeUnmount(() => {
   overflow: hidden;
   color: #fff;
   font-family: 'IBM Plex Mono', monospace;
-  font-size: 0.48rem;
+  font-size: 1.65rem;
   text-align: center;
   text-overflow: ellipsis;
   text-shadow: 0 1px 4px #000;

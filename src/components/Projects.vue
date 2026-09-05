@@ -7,7 +7,13 @@
       <div class="projects-grid">
         <div class="project-card fade-in-up" v-for="(project, index) in projects" :key="index" :style="{ animationDelay: `${index * 0.15}s` }">
           <div class="project-image">
-            <LiquidPreview :title="project.title" :index="index" :characters="project.previewCharacters" />
+            <LiquidPreview
+              :title="project.title"
+              :index="index"
+              :characters="project.previewCharacters"
+              :icons="project.previewIcons"
+              :bubble-count="project.previewBubbleCount"
+            />
           </div>
           <div class="project-content">
             <h3>{{ project.title }}</h3>
@@ -59,6 +65,8 @@ interface Project {
   github?: string
   live?: string
   previewCharacters?: PreviewCharacter[]
+  previewIcons?: string[]
+  previewBubbleCount?: number
 }
 
 interface PreviewCharacter {
@@ -74,6 +82,9 @@ const harryPotterPreviewCharacters: PreviewCharacter[] = [
   { name: 'Cedric Diggory', image: 'https://ik.imagekit.io/hpapi/cedric.png' }
 ]
 
+const bmiPreviewIcons = ['⚖', '↕', '▣', '●', '＋', '◇']
+const weatherPreviewIcons = ['☀', '☁', '☂', '❄', '☄', '◌']
+
 const projects = ref<Project[]>([
   {
     title: 'BMI Calculator',
@@ -81,7 +92,8 @@ const projects = ref<Project[]>([
     icon: '⚖️',
     technologies: ['React', 'TypeScript', 'Tailwind CSS', 'Vite'],
     github: 'https://github.com/behzadkazemi/BMI-Calculator',
-    live: '/bmi-calculator/'
+    live: '/bmi-calculator/',
+    previewIcons: bmiPreviewIcons
   },
   {
     title: 'Weather App',
@@ -89,7 +101,8 @@ const projects = ref<Project[]>([
     icon: '\u2601\uFE0F',
     technologies: ['JavaScript', 'Weather API', 'CSS3'],
     github: 'https://github.com/behzadkazemi/WeatherApp',
-    live: '/weather-app/'
+    live: '/weather-app/',
+    previewIcons: weatherPreviewIcons
   },
   {
     title: 'Ito-Ito Code Challenge',
@@ -162,7 +175,8 @@ const projects = ref<Project[]>([
     technologies: ['JavaScript', 'HTML5', 'CSS3'],
     github: 'https://github.com/behzadkazemi/HarryPotter',
     live: '/harry-potter/',
-    previewCharacters: harryPotterPreviewCharacters
+    previewCharacters: harryPotterPreviewCharacters,
+    previewBubbleCount: 14
   },
   {
     title: 'Ext JS Training',
