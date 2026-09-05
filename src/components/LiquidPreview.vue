@@ -4,7 +4,8 @@
     <div
       v-for="bubble in bubbles"
       :key="bubble.id"
-      :class="[`bubble-${bubble.palette}`, { 'has-character': bubble.character }]"
+      class="liquid-bubble"
+      :class="`bubble-${bubble.palette}`"
       :style="bubbleStyle(bubble)"
     >
       <span></span>
@@ -16,7 +17,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { onBeforeUnmount, onMounted, ref } from 'vue'
 
 interface PreviewCharacter {
   name: string
@@ -34,30 +35,21 @@ interface Bubble {
   offsetX: number
   offsetY: number
   scale: number
-  driftX?: number
-  driftY?: number
-  driftDuration?: number
-  driftDelay?: number
+  driftX: number
+  driftY: number
   character?: PreviewCharacter
 }
 
 const preview = ref<HTMLElement | null>(null)
 const bubbles = ref<Bubble[]>([
-  { id: 1, baseX: 16, baseY: 26, size: 44, palette: 1, offsetX: 0, offsetY: 0, scale: 1 },
-  { id: 2, baseX: 38, baseY: 66, size: 30, palette: 2, offsetX: 0, offsetY: 0, scale: 1 },
-  { id: 3, baseX: 58, baseY: 27, size: 62, palette: 3, offsetX: 0, offsetY: 0, scale: 1 },
-  { id: 4, baseX: 78, baseY: 67, size: 39, palette: 4, offsetX: 0, offsetY: 0, scale: 1 },
-  { id: 5, baseX: 87, baseY: 24, size: 24, palette: 5, offsetX: 0, offsetY: 0, scale: 1 },
-  { id: 6, baseX: 25, baseY: 82, size: 20, palette: 3, offsetX: 0, offsetY: 0, scale: 1 },
-  { id: 7, baseX: 67, baseY: 79, size: 25, palette: 1, offsetX: 0, offsetY: 0, scale: 1 }
+  { id: 1, baseX: 16, baseY: 26, size: 44, palette: 1, offsetX: 0, offsetY: 0, scale: 1, driftX: 0, driftY: 0 },
+  { id: 2, baseX: 38, baseY: 66, size: 30, palette: 2, offsetX: 0, offsetY: 0, scale: 1, driftX: 0, driftY: 0 },
+  { id: 3, baseX: 58, baseY: 27, size: 62, palette: 3, offsetX: 0, offsetY: 0, scale: 1, driftX: 0, driftY: 0 },
+  { id: 4, baseX: 78, baseY: 67, size: 39, palette: 4, offsetX: 0, offsetY: 0, scale: 1, driftX: 0, driftY: 0 },
+  { id: 5, baseX: 87, baseY: 24, size: 24, palette: 5, offsetX: 0, offsetY: 0, scale: 1, driftX: 0, driftY: 0 },
+  { id: 6, baseX: 25, baseY: 82, size: 20, palette: 3, offsetX: 0, offsetY: 0, scale: 1, driftX: 0, driftY: 0 },
+  { id: 7, baseX: 67, baseY: 79, size: 25, palette: 1, offsetX: 0, offsetY: 0, scale: 1, driftX: 0, driftY: 0 }
 ])
-
-bubbles.value.forEach((bubble) => {
-  bubble.driftX = -18 + Math.random() * 36
-  bubble.driftY = -18 + Math.random() * 36
-  bubble.driftDuration = 5 + Math.random() * 4
-  bubble.driftDelay = Math.random() * -6
-})
 
 if (props.characters?.length) {
   bubbles.value.forEach((bubble) => {
@@ -66,15 +58,11 @@ if (props.characters?.length) {
 }
 
 const bubbleStyle = (bubble: Bubble) => ({
-  left: `${bubble.baseX + bubble.offsetX}%`,
-  top: `${bubble.baseY + bubble.offsetY}%`,
+  left: `${bubble.baseX + bubble.driftX + bubble.offsetX}%`,
+  top: `${bubble.baseY + bubble.driftY + bubble.offsetY}%`,
   width: `${bubble.size}px`,
   height: `${bubble.size}px`,
-  transform: `translate(-50%, -50%) scale(${bubble.scale})`,
-  '--drift-x': `${bubble.driftX || 0}px`,
-  '--drift-y': `${bubble.driftY || 0}px`,
-  '--drift-duration': `${bubble.driftDuration || 6}s`,
-  '--drift-delay': `${bubble.driftDelay || 0}s`
+  transform: `translate(-50%, -50%) scale(${bubble.scale})`
 })
 
 const handlePointerMove = (event: PointerEvent) => {
@@ -84,8 +72,8 @@ const handlePointerMove = (event: PointerEvent) => {
   const pointerY = ((event.clientY - bounds.top) / bounds.height) * 100
 
   bubbles.value.forEach((bubble) => {
-    const distanceX = bubble.baseX - pointerX
-    const distanceY = bubble.baseY - pointerY
+    const distanceX = bubble.baseX + bubble.driftX - pointerX
+    const distanceY = bubble.baseY + bubble.driftY - pointerY
     const distance = Math.sqrt(distanceX ** 2 + distanceY ** 2)
     const influence = Math.max(0, 1 - distance / 28)
 
@@ -111,6 +99,24 @@ const resetBubbles = () => {
     bubble.scale = 1
   })
 }
+
+let driftTimer: number | undefined
+
+const moveBubbles = () => {
+  bubbles.value.forEach((bubble) => {
+    bubble.driftX = -8 + Math.random() * 16
+    bubble.driftY = -8 + Math.random() * 16
+  })
+}
+
+onMounted(() => {
+  moveBubbles()
+  driftTimer = window.setInterval(moveBubbles, 2600)
+})
+
+onBeforeUnmount(() => {
+  if (driftTimer) window.clearInterval(driftTimer)
+})
 </script>
 
 <style scoped>
@@ -143,7 +149,7 @@ const resetBubbles = () => {
   box-shadow: inset -8px -10px 14px rgba(0, 0, 0, 0.24), inset 8px 7px 12px rgba(255, 255, 255, 0.32), 0 8px 18px rgba(0, 0, 0, 0.28);
   opacity: 0.92;
   transition: left 0.35s ease-out, top 0.35s ease-out, transform 0.35s ease-out;
-  animation: liquid-float var(--drift-duration) ease-in-out var(--drift-delay) infinite;
+  animation: liquid-float 5s ease-in-out infinite;
 }
 
 .liquid-bubble::before {
@@ -169,17 +175,18 @@ const resetBubbles = () => {
   background: rgba(255, 255, 255, 0.35);
 }
 
-.liquid-bubble.has-character img {
+.liquid-bubble img {
+  position: relative;
+  z-index: 1;
   width: 100%;
   height: 100%;
   border-radius: 50%;
-  object-fit: contain;
-  padding: 8%;
-  opacity: 1;
+  object-fit: cover;
+  opacity: 0.96;
   mix-blend-mode: normal;
 }
 
-.liquid-bubble.has-character strong {
+.liquid-bubble strong {
   position: absolute;
   right: 3px;
   bottom: 8px;
@@ -216,10 +223,8 @@ const resetBubbles = () => {
 }
 
 @keyframes liquid-float {
-  0%, 100% { margin: 0; }
-  25% { margin-left: var(--drift-x); margin-top: var(--drift-y); }
-  50% { margin-left: calc(var(--drift-x) * -1); margin-top: calc(var(--drift-y) * -1); }
-  75% { margin-left: calc(var(--drift-x) * 0.5); margin-top: calc(var(--drift-y) * 0.5); }
+  0%, 100% { margin-top: 0; }
+  50% { margin-top: -7px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
