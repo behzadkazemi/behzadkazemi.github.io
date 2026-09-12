@@ -7,13 +7,7 @@
       <div class="projects-grid">
         <div class="project-card fade-in-up" v-for="(project, index) in projects" :key="index" :style="{ animationDelay: `${index * 0.15}s` }">
           <div class="project-image">
-            <LiquidPreview
-              :title="project.title"
-              :index="index"
-              :characters="project.previewCharacters"
-              :icons="project.previewIcons"
-              :bubble-count="project.previewBubbleCount"
-            />
+            <span class="project-icon" aria-hidden="true">{{ project.icon }}</span>
           </div>
           <div class="project-content">
             <h3>{{ project.title }}</h3>
@@ -53,7 +47,6 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import LiquidPreview from './LiquidPreview.vue'
 
 const isExternal = (url: string) => /^https?:\/\//.test(url)
 
@@ -64,27 +57,7 @@ interface Project {
   technologies: string[]
   github?: string
   live?: string
-  previewCharacters?: PreviewCharacter[]
-  previewIcons?: string[]
-  previewBubbleCount?: number
 }
-
-interface PreviewCharacter {
-  name: string
-  image: string
-}
-
-const harryPotterPreviewCharacters: PreviewCharacter[] = [
-  { name: 'Harry Potter', image: 'https://ik.imagekit.io/hpapi/harry.jpg' },
-  { name: 'Hermione Granger', image: 'https://ik.imagekit.io/hpapi/hermione.jpeg' },
-  { name: 'Draco Malfoy', image: 'https://ik.imagekit.io/hpapi/draco.jpg' },
-  { name: 'Luna Lovegood', image: 'https://ik.imagekit.io/hpapi/luna.jpg' },
-  { name: 'Cedric Diggory', image: 'https://ik.imagekit.io/hpapi/cedric.png' }
-]
-
-const bmiPreviewIcons = ['⚖', '↕', '▣', '●', '＋', '◇']
-const weatherPreviewIcons = ['☀', '☁', '☂', '❄', '☄', '◌']
-const harryPotterPreviewIcons = ['⚡', '✦', '◇', '✧', '☄']
 
 const projects = ref<Project[]>([
   {
@@ -93,8 +66,7 @@ const projects = ref<Project[]>([
     icon: '⚖️',
     technologies: ['React', 'TypeScript', 'Tailwind CSS', 'Vite'],
     github: 'https://github.com/behzadkazemi/BMI-Calculator',
-    live: '/bmi-calculator/',
-    previewIcons: bmiPreviewIcons
+    live: '/bmi-calculator/'
   },
   {
     title: 'Weather App',
@@ -102,8 +74,7 @@ const projects = ref<Project[]>([
     icon: '\u2601\uFE0F',
     technologies: ['JavaScript', 'Weather API', 'CSS3'],
     github: 'https://github.com/behzadkazemi/WeatherApp',
-    live: '/weather-app/',
-    previewIcons: weatherPreviewIcons
+    live: '/weather-app/'
   },
   {
     title: 'Ito-Ito Code Challenge',
@@ -175,10 +146,7 @@ const projects = ref<Project[]>([
     icon: '\u26A1',
     technologies: ['JavaScript', 'HTML5', 'CSS3'],
     github: 'https://github.com/behzadkazemi/HarryPotter',
-    live: '/harry-potter/',
-    previewIcons: harryPotterPreviewIcons,
-    previewCharacters: harryPotterPreviewCharacters,
-    previewBubbleCount: 14
+    live: '/harry-potter/'
   },
   {
     title: 'Ext JS Training',
@@ -296,6 +264,15 @@ const projects = ref<Project[]>([
   justify-content: center;
   position: relative;
   overflow: hidden;
+}
+
+.project-icon {
+  position: relative;
+  z-index: 1;
+  color: var(--primary);
+  font-size: 5rem;
+  line-height: 1;
+  filter: drop-shadow(0 0 18px rgba(141, 255, 101, 0.45));
 }
 
 .project-content {
