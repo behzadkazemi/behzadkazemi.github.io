@@ -165,6 +165,13 @@ const projects = ref<Project[]>([
     live: 'https://behzadkazemi.github.io/Question-Answering-Tool/'
   },
   {
+    title: 'Einbürgerungstest Trainer',
+    description: 'A multilingual German citizenship test preparation platform with study plans, realistic 33-question exams, progress tracking, mistake review, favorites, statistics, and RTL support.',
+    icon: '\uD83C\uDDE9\uD83C\uDDEA',
+    technologies: ['Vue 3', 'TypeScript', 'Pinia', 'Vue Router', 'Vue I18n', 'Tailwind CSS'],
+    live: '/einbuergerungstest/'
+  },
+  {
     title: 'Random Movie Adviser',
     description: 'A lightweight movie discovery tool that suggests a random film for the next viewing session.',
     icon: '\uD83C\uDFAC',

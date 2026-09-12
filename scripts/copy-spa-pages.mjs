@@ -16,4 +16,6 @@ for (const page of ['random-movie-adviser', 'imdb-top-250', 'game-of-thrones', '
 	mkdirSync(resolve(dist, page), { recursive: true })
 	writeFileSync(resolve(dist, page, 'index.html'), html)
 }
+mkdirSync(resolve(dist, 'einbuergerungstest'), { recursive: true })
+writeFileSync(resolve(dist, 'einbuergerungstest/index.html'), html)
 writeFileSync(resolve(dist, '404.html'), html)
