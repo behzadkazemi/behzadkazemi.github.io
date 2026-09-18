@@ -11,7 +11,6 @@
     <Skills />
     <Experience />
     <Projects />
-    <Contact />
     <Footer />
   </div>
 </template>
@@ -23,7 +22,6 @@ import About from './components/About.vue'
 import Skills from './components/Skills.vue'
 import Experience from './components/Experience.vue'
 import Projects from './components/Projects.vue'
-import Contact from './components/Contact.vue'
 import Footer from './components/Footer.vue'
 import BmiCalculator from './components/BmiCalculator.vue'
 import WeatherDemo from './components/WeatherDemo.vue'
