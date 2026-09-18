@@ -62,7 +62,7 @@
               <label for="message">Message</label>
               <textarea id="message" v-model="form.message" required placeholder="Your message..." rows="6"></textarea>
             </div>
-              <button type="submit" class="btn-primary" style="background-color: rgba(17, 39, 28, 0.9);">Send Message</button>
+              <button type="submit" class="btn-primary">Send Message</button>
             <p v-if="formStatus" :class="['form-status', formStatus.type]">{{ formStatus.message }}</p>
           </form>
         </div>
@@ -245,18 +245,21 @@ button[type="submit"] {
   width: 100%;
   padding: 14px 32px;
   font-weight: 600;
-  border-radius: 8px;
-  background-color: var(--primary);
-  color: white;
-  transition: all 0.3s ease;
+  border-radius: 100px;
+  background: linear-gradient(180deg, #252525 0%, #050505 100%);
+  color: #c9c9c9;
+  transition: transform 0.18s ease, box-shadow 0.25s ease, background-position 0.35s ease;
   font-size: 1rem;
   cursor: pointer;
 }
 
 button[type="submit"]:hover {
-  background-color: var(--primary-dark);
+  background-color: transparent;
+  background-image: radial-gradient(circle at 28% 0%, rgba(255, 255, 255, 0.42), transparent 28%), linear-gradient(110deg, #101010 12%, #717171 35%, #151515 54%, #c6c6c6 69%, #090909 86%);
+  background-position: 75% 25%;
+  color: #f4f4f4;
   transform: translateY(-2px);
-  box-shadow: 0 10px 25px rgba(37, 99, 235, 0.3);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.2), 0 16px 22px rgba(0, 0, 0, 0.22), inset 0 1px 1px rgba(255, 255, 255, 0.28);
 }
 
 .form-status {

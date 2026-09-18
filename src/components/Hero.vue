@@ -1,22 +1,21 @@
 <template>
   <section class="hero" id="hero">
     <div class="container">
-      <div class="hero-content fade-in-up">
+      <div class="hero-content">
         <h1>Hi, I'm Behzad Kazemi</h1>
         <p class="subtitle">Frontend Developer | Software Engineer</p>
         <p class="description">
           I build beautiful and functional web applications using modern technologies like Vue.js, React, and TypeScript.
-          Based in Berlin 🇩🇪, I'm passionate about creating seamless user experiences and clean code.
+          Based in Berlin, I'm passionate about creating seamless user experiences and clean code.
         </p>
-        <div class="hero-buttons">
-          <a href="#contact" class="btn-primary">Get In Touch</a>
-          <a href="https://github.com/behzadkazemi" target="_blank" rel="noopener noreferrer" class="btn-secondary">
-            View My Work
-          </a>
-        </div>
       </div>
-      <div class="hero-visual fade-in-down">
-        <div ref="sceneHost" class="liquid-scene" aria-hidden="true"></div>
+      <div ref="heroVisual" class="hero-visual">
+        <div class="spotlight" aria-hidden="true"></div>
+        <div class="spline-scene">
+          <canvas ref="sceneCanvas" aria-label="Interactive 3D scene"></canvas>
+          <div v-if="isLoading" class="scene-status">Loading interactive scene</div>
+          <div v-if="sceneError" class="scene-status scene-status-error">Interactive scene unavailable</div>
+        </div>
         <div class="scene-caption">Creative systems / Berlin</div>
       </div>
     </div>
@@ -25,120 +24,50 @@
 
 <script setup lang="ts">
 import { onBeforeUnmount, onMounted, ref } from 'vue'
-import * as THREE from 'three'
+import { Application } from '@splinetool/runtime'
 
-const sceneHost = ref<HTMLDivElement | null>(null)
-let renderer: THREE.WebGLRenderer | null = null
-let animationFrame = 0
-let cleanupScene: (() => void) | null = null
+const sceneCanvas = ref<HTMLCanvasElement | null>(null)
+const heroVisual = ref<HTMLDivElement | null>(null)
+const isLoading = ref(true)
+const sceneError = ref(false)
+let spline: Application | null = null
+let removePointerListeners: (() => void) | null = null
 
 onMounted(() => {
-  if (!sceneHost.value) return
+  if (!sceneCanvas.value || !heroVisual.value) return
 
-  const scene = new THREE.Scene()
-  const camera = new THREE.PerspectiveCamera(42, 1, 0.1, 100)
-  camera.position.z = 5.8
+  spline = new Application(sceneCanvas.value)
+  spline
+    .load('https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode')
+    .then(() => {
+      isLoading.value = false
+    })
+    .catch(() => {
+      isLoading.value = false
+      sceneError.value = true
+    })
 
-  renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true })
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
-  renderer.outputColorSpace = THREE.SRGBColorSpace
-  sceneHost.value.appendChild(renderer.domElement)
-
-  const uniforms = {
-    uTime: { value: 0 },
-    uPointer: { value: new THREE.Vector2(0, 0) },
+  const handlePointerMove = (event: PointerEvent) => {
+    if (!heroVisual.value) return
+    const bounds = heroVisual.value.getBoundingClientRect()
+    heroVisual.value.style.setProperty('--spotlight-x', `${event.clientX - bounds.left}px`)
+    heroVisual.value.style.setProperty('--spotlight-y', `${event.clientY - bounds.top}px`)
+    heroVisual.value.classList.add('is-hovered')
   }
 
-  const geometry = new THREE.IcosahedronGeometry(1.55, 64)
-  const material = new THREE.ShaderMaterial({
-    uniforms,
-    vertexShader: `
-      uniform float uTime;
-      uniform vec2 uPointer;
-      varying vec3 vNormal;
-      varying vec3 vPosition;
-
-      float wave(vec3 point) {
-        return sin(point.x * 3.2 + uTime * 1.1)
-          + sin(point.y * 4.1 - uTime * 0.8)
-          + sin(point.z * 5.0 + uTime * 0.9);
-      }
-
-      void main() {
-        vec3 displaced = position + normal * wave(position) * 0.075;
-        displaced += normal * sin(position.y * 8.0 + uTime * 1.4) * 0.035;
-        displaced.x += uPointer.x * 0.08;
-        displaced.y += uPointer.y * 0.08;
-        vNormal = normalize(normalMatrix * normal);
-        vPosition = displaced;
-        gl_Position = projectionMatrix * modelViewMatrix * vec4(displaced, 1.0);
-      }
-    `,
-    fragmentShader: `
-      uniform float uTime;
-      varying vec3 vNormal;
-      varying vec3 vPosition;
-
-      void main() {
-        vec3 light = normalize(vec3(-0.5, 0.8, 1.0));
-        float glow = pow(1.0 - max(dot(vNormal, vec3(0.0, 0.0, 1.0)), 0.0), 2.0);
-        float lighting = max(dot(vNormal, light), 0.0);
-        float ripple = sin(vPosition.y * 5.0 + uTime) * 0.08;
-        vec3 deep = vec3(0.01, 0.07, 0.045);
-        vec3 emerald = vec3(0.05, 0.72, 0.35);
-        vec3 lime = vec3(0.55, 1.0, 0.22);
-        vec3 color = mix(deep, emerald, lighting + glow * 0.7);
-        color = mix(color, lime, smoothstep(0.25, 0.95, vPosition.x + ripple) * 0.4);
-        gl_FragColor = vec4(color + glow * 0.18, 0.96);
-      }
-    `,
-  })
-  const liquid = new THREE.Mesh(geometry, material)
-  scene.add(liquid)
-
-  const resize = () => {
-    if (!sceneHost.value || !renderer) return
-    const { clientWidth, clientHeight } = sceneHost.value
-    camera.aspect = clientWidth / clientHeight
-    camera.updateProjectionMatrix()
-    renderer.setSize(clientWidth, clientHeight, false)
-  }
-
-  const pointer = (event: PointerEvent) => {
-    if (!sceneHost.value) return
-    const bounds = sceneHost.value.getBoundingClientRect()
-    uniforms.uPointer.value.set(
-      ((event.clientX - bounds.left) / bounds.width - 0.5) * 2,
-      -((event.clientY - bounds.top) / bounds.height - 0.5) * 2,
-    )
-  }
-
-  const animate = (time: number) => {
-    uniforms.uTime.value = time * 0.001
-    liquid.rotation.y = time * 0.00012
-    liquid.rotation.x = Math.sin(time * 0.00025) * 0.12
-    renderer?.render(scene, camera)
-    animationFrame = requestAnimationFrame(animate)
-  }
-
-  resize()
-  window.addEventListener('resize', resize)
-  sceneHost.value.addEventListener('pointermove', pointer)
-  animationFrame = requestAnimationFrame(animate)
-
-  cleanupScene = () => {
-    cancelAnimationFrame(animationFrame)
-    window.removeEventListener('resize', resize)
-    sceneHost.value?.removeEventListener('pointermove', pointer)
-    geometry.dispose()
-    material.dispose()
-    renderer?.dispose()
-    renderer?.domElement.remove()
-    renderer = null
+  const handlePointerLeave = () => heroVisual.value?.classList.remove('is-hovered')
+  heroVisual.value.addEventListener('pointermove', handlePointerMove)
+  heroVisual.value.addEventListener('pointerleave', handlePointerLeave)
+  removePointerListeners = () => {
+    heroVisual.value?.removeEventListener('pointermove', handlePointerMove)
+    heroVisual.value?.removeEventListener('pointerleave', handlePointerLeave)
   }
 })
 
-onBeforeUnmount(() => cleanupScene?.())
+onBeforeUnmount(() => {
+  removePointerListeners?.()
+  spline?.dispose()
+})
 </script>
 
 <style scoped>
@@ -146,7 +75,7 @@ onBeforeUnmount(() => cleanupScene?.())
   min-height: 100vh;
   display: flex;
   align-items: center;
-  padding: 120px 0 80px;
+  padding: 80px 0;
   background: #07100d;
   position: relative;
   overflow: hidden;
@@ -159,24 +88,28 @@ onBeforeUnmount(() => cleanupScene?.())
   left: 0;
   width: 100%;
   height: 100%;
-  background: radial-gradient(circle at 72% 48%, rgba(74, 255, 116, 0.16), transparent 34%), linear-gradient(120deg, rgba(141, 255, 101, 0.06), transparent 36%);
+  background: radial-gradient(circle at 75% 48%, rgba(74, 255, 116, 0.14), transparent 34%), linear-gradient(120deg, rgba(141, 255, 101, 0.05), transparent 40%);
   pointer-events: none;
 }
 
 .hero .container {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 60px;
+  gap: 0;
+  width: min(100% - 40px, 1200px);
+  min-height: 500px;
+  background: transparent;
   align-items: center;
   z-index: 1;
 }
 
 .hero-content {
+  animation: fadeInUp 0.7s ease-out both;
   animation-delay: 0.2s;
 }
 
 .hero-content h1 {
-  font-size: 3.5rem;
+  font-size: clamp(2.5rem, 5vw, 3.5rem);
   margin-bottom: 10px;
   color: #f5f7ef;
   background: linear-gradient(135deg, #f2ffe9 20%, #8dff65 85%);
@@ -198,11 +131,11 @@ onBeforeUnmount(() => cleanupScene?.())
 }
 
 .description {
-  font-size: 1.1rem;
-  color: var(--text-secondary);
-  margin-bottom: 40px;
-  line-height: 1.8;
-  max-width: 500px;
+  font-size: 0.95rem;
+  color: #d4d4d4;
+  margin-bottom: 0;
+  line-height: 1.6;
+  max-width: 470px;
 }
 
 .hero-buttons {
@@ -244,41 +177,77 @@ onBeforeUnmount(() => cleanupScene?.())
 }
 
 .hero-visual {
+  --spotlight-x: 50%;
+  --spotlight-y: 50%;
+  position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
+  height: 500px;
+  animation: fadeInDown 0.7s ease-out both;
   animation-delay: 0.4s;
 }
 
-.liquid-scene {
+.spline-scene {
   position: relative;
   width: 100%;
-  max-width: 520px;
-  aspect-ratio: 1 / 1.08;
-  filter: drop-shadow(0 30px 45px rgba(0, 0, 0, 0.35));
+  max-width: none;
+  height: 500px;
+  overflow: hidden;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  filter: none;
 }
 
-.liquid-scene::before {
-  content: '';
+.spline-scene canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.spotlight {
   position: absolute;
-  inset: 18% 14%;
+  z-index: 2;
+  width: 260px;
+  height: 260px;
+  left: var(--spotlight-x);
+  top: var(--spotlight-y);
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(48, 221, 113, 0.2), transparent 68%);
+  background: radial-gradient(circle, rgba(244, 255, 232, 0.22), transparent 68%);
   filter: blur(18px);
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  transition: opacity 200ms ease;
+}
+
+.hero-visual.is-hovered .spotlight {
+  opacity: 1;
+}
+
+.scene-status {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: var(--text-secondary);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
   pointer-events: none;
 }
 
-.liquid-scene canvas {
-  width: 100%;
-  height: 100%;
-  display: block;
+.scene-status-error {
+  color: var(--primary);
 }
 
 .scene-caption {
   position: absolute;
-  right: 5%;
-  bottom: 4%;
-  color: rgba(141, 255, 101, 0.62);
+  right: 24px;
+  bottom: 14px;
+  color: rgba(255, 255, 255, 0.5);
   font-family: 'IBM Plex Mono', monospace;
   font-size: 0.72rem;
   letter-spacing: 0.12em;
@@ -296,7 +265,15 @@ onBeforeUnmount(() => cleanupScene?.())
   }
 
   .hero-visual {
-    display: none;
+    height: 360px;
+  }
+
+  .spline-scene {
+    height: 360px;
+  }
+
+  .scene-caption {
+    bottom: 14px;
   }
 
   .hero-content h1 {
